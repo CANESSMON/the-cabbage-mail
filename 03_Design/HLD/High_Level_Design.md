@@ -42,6 +42,8 @@
 ---
 
 ## 3. Technology Stack Selection (Minimalist & Modern)
-- **Frontend & Logic**: React / Vite / HTML5 / Modern Vanilla CSS design system.
-- **Backend / Delivery Engine**: Node.js / Express or API route handlers with AWS SDK (`@aws-sdk/client-sns`).
-- **Data Persistence**: Lightweight SQLite / PostgreSQL or JSON DB store for simple local setup.
+- **Frontend Framework**: React + Vite + Tailwind CSS.
+- **UI Components & Icons**: **Shadcn UI** component primitives (Radix UI) + Lucide Icons (`lucide-react`).
+- **Typography Standards**: `Plus Jakarta Sans` (Headings), `Inter` (Body & UI controls), `JetBrains Mono` (Merge tags & Code). See details in [`03_Design/UI_UX/Typography_And_Design_System.md`](file:///d:/email%20marketing%20tool/03_Design/UI_UX/Typography_And_Design_System.md).
+- **Backend / Delivery Engine**: Node.js API handlers with AWS SDK (`@aws-sdk/client-sns`).
+- **Data Persistence**: Lightweight local JSON/SQLite store for managing client workspaces, contacts, and campaigns.
