@@ -4,12 +4,12 @@
 
 ---
 
-## 📂 Project Governance & Documentation Structure
+## 📂 Repository Structure
 
-All project documentation, specs, designs, management artifacts, test plans, and release notes are maintained within the [`CLIENT_PROJECT`](./CLIENT_PROJECT) directory:
+All project documentation, specs, designs, management artifacts, test plans, and release notes are organized directly at the root of the repository:
 
 ```
-CLIENT_PROJECT/
+the-cabbage-mail/
 ├── 01_Contract_And_Commercial/  # Proposal, SOW, NDA
 ├── 02_Requirements/             # Discovery Notes, BRD, SRS, User Stories
 ├── 03_Design/                   # UI/UX, HLD, LLD, API Spec, DB Design
