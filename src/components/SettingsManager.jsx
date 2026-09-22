@@ -5,9 +5,10 @@ import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Badge } from './ui/badge';
 import { Settings, Radio, Key, Building2, CheckCircle2, ShieldCheck, Mail } from 'lucide-react';
+import DomainVerificationWidget from './DomainVerificationWidget';
 
 export default function SettingsManager() {
-  const { activeClient, addClient } = useAuth();
+  const { activeClient } = useAuth();
 
   const [senderName, setSenderName] = useState(activeClient?.senderName || '');
   const [senderEmail, setSenderEmail] = useState(activeClient?.senderEmail || '');
@@ -25,16 +26,18 @@ export default function SettingsManager() {
     setTimeout(() => setSaved(false), 2000);
   };
 
+  const domainName = (senderEmail.split('@')[1]) || 'acmemarketing.com';
+
   return (
     <div className="space-y-6 max-w-4xl mx-auto">
       {/* Header */}
       <div>
         <h1 className="text-2xl font-bold font-heading text-slate-100 flex items-center gap-2">
           <Settings className="w-6 h-6 text-emerald-400" />
-          <span>Workspace & AWS Settings</span>
+          <span>Workspace, Domain & AWS Settings</span>
         </h1>
         <p className="text-xs text-slate-400 mt-1">
-          Configure AWS SNS cloud credentials and default sender addresses for <strong className="text-slate-200">{activeClient?.name}</strong>.
+          Configure AWS SNS cloud credentials, DNS domain authentication (SPF, DKIM, DMARC), and sender identity for <strong className="text-slate-200">{activeClient?.name}</strong>.
         </p>
       </div>
 
@@ -44,6 +47,9 @@ export default function SettingsManager() {
           <span className="text-xs font-semibold">Settings updated successfully for this workspace!</span>
         </Card>
       )}
+
+      {/* Domain Authentication Widget */}
+      <DomainVerificationWidget domain={domainName} />
 
       <form onSubmit={handleSaveSettings} className="space-y-6">
         

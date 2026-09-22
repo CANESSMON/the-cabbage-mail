@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from './ui/card';
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from './ui/card';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Badge } from './ui/badge';
-import { Send, Eye, Code, Radio, Sparkles, CheckCircle2, User, AlertCircle } from 'lucide-react';
+import { Send, Eye, Code, Radio, Sparkles, CheckCircle2, AlertTriangle, ShieldCheck, AlertCircle } from 'lucide-react';
 import { dispatchCampaignViaAwsSns } from '../services/awsSnsService';
+import { analyzeContentSpamScore, scanSubscriberListHygiene } from '../services/preSendValidationEngine';
 
 export default function CampaignComposer({ setActiveTab }) {
   const { activeClient, subscribers, addCampaign } = useAuth();
@@ -18,25 +19,26 @@ export default function CampaignComposer({ setActiveTab }) {
   const [sending, setSending] = useState(false);
   const [sendResult, setSendResult] = useState(null);
 
-  const activeCount = subscribers.filter(s => s.status === 'ACTIVE').length;
+  const activeSubscribers = subscribers.filter(s => s.status === 'ACTIVE');
+  const hygieneResult = scanSubscriberListHygiene(activeSubscribers);
+  const spamAnalysis = analyzeContentSpamScore(subject, htmlContent, activeClient?.addressLine);
 
   const handleInsertTag = (tag) => {
     setHtmlContent(prev => prev + ` ${tag} `);
   };
 
   const handleSendCampaign = async () => {
-    if (!subject || !htmlContent || activeCount === 0) return;
+    if (!subject || !htmlContent || hygieneResult.validCount === 0 || !spamAnalysis.canDispatch) return;
     setSending(true);
     setSendResult(null);
 
     try {
-      const activeSubscribers = subscribers.filter(s => s.status === 'ACTIVE');
       const dispatchResponse = await dispatchCampaignViaAwsSns({
         campaignSubject: subject,
         campaignHtml: htmlContent,
         senderName: activeClient?.senderName || 'Sender',
         senderEmail: activeClient?.senderEmail || 'sender@domain.com',
-        subscribers: activeSubscribers,
+        subscribers: hygieneResult.cleanedSubscribers,
         awsConfig: activeClient,
       });
 
@@ -44,7 +46,7 @@ export default function CampaignComposer({ setActiveTab }) {
       addCampaign({
         subject,
         content: htmlContent,
-        targetCount: activeCount,
+        targetCount: hygieneResult.validCount,
         sentCount: dispatchResponse.totalDispatched,
         awsMessageId: dispatchResponse.dispatches[0]?.messageId || `sns-msg-${Date.now()}`,
       });
@@ -77,10 +79,10 @@ export default function CampaignComposer({ setActiveTab }) {
         <div>
           <h1 className="text-2xl font-bold font-heading text-slate-100 flex items-center gap-2">
             <Send className="w-6 h-6 text-emerald-400" />
-            <span>Campaign Composer</span>
+            <span>Campaign Composer & Pre-Flight Inspector</span>
           </h1>
           <p className="text-xs text-slate-400 mt-1">
-            Dispatch emails via AWS SNS to <strong className="text-emerald-400">{activeCount} active contacts</strong> in <strong className="text-slate-200">{activeClient?.name}</strong>.
+            Pre-flight hygiene scan & dispatch via AWS SNS to <strong className="text-emerald-400">{hygieneResult.validCount} clean contacts</strong> in <strong className="text-slate-200">{activeClient?.name}</strong>.
           </p>
         </div>
 
@@ -97,7 +99,7 @@ export default function CampaignComposer({ setActiveTab }) {
           <Button
             size="sm"
             onClick={handleSendCampaign}
-            disabled={sending || activeCount === 0}
+            disabled={sending || hygieneResult.validCount === 0 || !spamAnalysis.canDispatch}
             className="gap-2 shadow-lg shadow-emerald-950"
           >
             <Radio className="w-3.5 h-3.5 animate-pulse text-emerald-300" />
@@ -204,41 +206,78 @@ export default function CampaignComposer({ setActiveTab }) {
           </Card>
         </div>
 
-        {/* Right 1 Col: Dispatch Summary */}
+        {/* Right 1 Col: Pre-Flight Inspection & Deliverability Panel */}
         <div className="space-y-4">
           <Card className="p-5 space-y-4 border-slate-800">
             <h3 className="text-sm font-bold font-heading text-slate-100 flex items-center gap-2">
-              <Sparkles className="w-4 h-4 text-emerald-400" />
-              <span>Broadcast Metadata</span>
+              <ShieldCheck className="w-4 h-4 text-emerald-400" />
+              <span>Pre-Flight Inspection & Spam Score</span>
             </h3>
 
-            <div className="space-y-3 text-xs">
-              <div className="p-3 bg-slate-950/80 rounded-lg border border-slate-800 space-y-1">
-                <span className="text-slate-400 block text-[11px]">Sender Identity</span>
-                <span className="font-semibold text-slate-200 block">{activeClient?.senderName}</span>
-                <span className="font-mono text-emerald-400 text-[11px] block truncate">{activeClient?.senderEmail}</span>
+            {/* Live Spam Score Indicator */}
+            <div className="p-3 bg-slate-950/80 rounded-lg border border-slate-800 space-y-2">
+              <div className="flex items-center justify-between text-xs">
+                <span className="text-slate-400">Content Spam Score</span>
+                <Badge variant={spamAnalysis.badgeColor === 'emerald' ? 'default' : 'destructive'} className="text-[10px]">
+                  {spamAnalysis.rating}
+                </Badge>
               </div>
-
-              <div className="p-3 bg-slate-950/80 rounded-lg border border-slate-800 space-y-1">
-                <span className="text-slate-400 block text-[11px]">Target Audience</span>
-                <span className="font-bold text-slate-100 text-sm">{activeCount} Subscribers</span>
-                <span className="text-slate-400 text-[10px] block">Filter: ACTIVE Status</span>
+              <div className="flex items-baseline space-x-2">
+                <span className={`text-2xl font-extrabold font-heading ${spamAnalysis.spamScore === 0 ? 'text-emerald-400' : 'text-amber-400'}`}>
+                  {spamAnalysis.spamScore}
+                </span>
+                <span className="text-xs text-slate-500">/ 100 Risk Points</span>
               </div>
+              {spamAnalysis.triggersFound.length > 0 && (
+                <div className="text-[11px] text-amber-400/90 space-y-0.5 pt-1 border-t border-slate-800">
+                  {spamAnalysis.triggersFound.map((t, idx) => (
+                    <div key={idx} className="flex items-center gap-1">
+                      <AlertTriangle className="w-3 h-3 text-amber-400 shrink-0" /> {t}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
 
-              <div className="p-3 bg-slate-950/80 rounded-lg border border-slate-800 space-y-1">
-                <span className="text-slate-400 block text-[11px]">AWS Infrastructure</span>
-                <span className="font-mono text-[11px] text-slate-300 block truncate">{activeClient?.awsRegion || 'us-east-1'}</span>
-                <span className="font-mono text-[10px] text-emerald-400 block truncate">{activeClient?.awsTopicArn}</span>
+            {/* List Hygiene Summary */}
+            <div className="p-3 bg-slate-950/80 rounded-lg border border-slate-800 space-y-1 text-xs">
+              <span className="text-slate-400 block text-[11px]">List Hygiene Inspection</span>
+              <div className="flex justify-between items-center text-slate-200">
+                <span>Clean Active Contacts</span>
+                <strong className="text-emerald-400 font-mono">{hygieneResult.validCount}</strong>
+              </div>
+              {hygieneResult.disposableCount > 0 && (
+                <div className="flex justify-between items-center text-rose-400 text-[11px]">
+                  <span>Disposable Emails Rejected</span>
+                  <strong className="font-mono">-{hygieneResult.disposableCount}</strong>
+                </div>
+              )}
+            </div>
+
+            {/* CAN-SPAM Compliance Check */}
+            <div className="p-3 bg-slate-950/80 rounded-lg border border-slate-800 space-y-1.5 text-xs">
+              <span className="text-slate-400 block text-[11px]">CAN-SPAM Legal Checklist</span>
+              <div className="flex items-center gap-1.5 text-slate-300">
+                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+                <span>Verified Sender Address</span>
+              </div>
+              <div className="flex items-center gap-1.5 text-slate-300">
+                {htmlContent.includes('{{unsubscribe_link}}') || htmlContent.toLowerCase().includes('unsubscribe') ? (
+                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+                ) : (
+                  <AlertCircle className="w-3.5 h-3.5 text-rose-400" />
+                )}
+                <span>Unsubscribe Header Link</span>
               </div>
             </div>
 
             <Button
               onClick={handleSendCampaign}
-              disabled={sending || activeCount === 0}
+              disabled={sending || hygieneResult.validCount === 0 || !spamAnalysis.canDispatch}
               className="w-full gap-2 shadow-lg shadow-emerald-950 mt-2"
             >
               <Send className="w-4 h-4" />
-              {sending ? "Sending via AWS SNS..." : `Send to ${activeCount} Contacts`}
+              {sending ? "Sending via AWS SNS..." : `Dispatch to ${hygieneResult.validCount} Contacts`}
             </Button>
           </Card>
         </div>
