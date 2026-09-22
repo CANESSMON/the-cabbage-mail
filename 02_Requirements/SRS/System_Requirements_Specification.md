@@ -30,8 +30,32 @@
 
 ---
 
+### 🛡️ Enterprise Trust, Compliance & Verification Requirements
+
+### FR-5: Domain & Identity Verification (SPF, DKIM, DMARC, MX)
+- **FR-5.1 (TXT Challenge)**: Generate a unique verification token (`cabbage-verify-domain=txt_...`) for clients to publish in DNS.
+- **FR-5.2 (DKIM CNAME Check)**: Provide 3 CNAME DKIM keys for AWS SES domain signing and check live DNS propagation.
+- **FR-5.3 (SPF & DMARC)**: Audit client DNS for valid `v=spf1` and `v=DMARC1` policies prior to granting production sending rights.
+- **FR-5.4 (SES Identity Verification)**: Query AWS SES identity status (`PendingVerification`, `Success`, `Failed`).
+
+### FR-6: Client Business Vetting & KYC Onboarding
+- **FR-6.1 (Business Profile)**: Collect Website URL, Company Industry, Physical Postal Address (CAN-SPAM required), and Target Monthly Email Volume.
+- **FR-6.2 (Anti-Spam Policy Declaration)**: Require explicit agreement prohibiting purchased, rented, or scraped contact lists.
+- **FR-6.3 (Account Status Pipeline)**: Enforce sending restrictions based on status:
+  - `SANDBOX` (Max 200 emails/day, verified recipient addresses only).
+  - `PENDING_REVIEW` (Under manual/automated domain review).
+  - `VERIFIED_PRODUCTION` (Full sending quota enabled).
+  - `PAUSED_RISK` (Auto-suspended due to high bounce/complaint rates).
+
+### FR-7: Pre-Send Campaign Spam & Hygiene Engine
+- **FR-7.1 (List Hygiene)**: Automatically flag & reject invalid syntax emails, temporary/disposable domains (`@mailinator.com`, `@tempmail.com`), and role accounts (`admin@`, `support@`).
+- **FR-7.2 (Spam Content Score)**: Scan campaign subject lines and HTML for high-risk spam triggers (e.g. ALL CAPS, "100% FREE", "ACT NOW", excessive dollar signs `$$$`).
+- **FR-7.3 (Compliance Enforcer)**: Block dispatch if `{{unsubscribe_link}}` or physical sender address is missing from email body.
+
+---
+
 ## 2. Non-Functional Requirements
 - **NFR-1 (Performance)**: Fast page load (<1.5s) and responsive UI.
 - **NFR-2 (Security)**: Password hashing, encrypted storage of tokens/keys, strict tenant data isolation.
 - **NFR-3 (Usability)**: Intuitive self-service flow with step-by-step onboarding wizard.
-- **NFR-4 (Reliability)**: Asynchronous queue processing for campaign dispatches to prevent web request timeouts.
+- **NFR-4 (Reliability & Deliverability Guardrails)**: Asynchronous queue processing; auto-pause workspace if bounce rate > 5% or complaint rate > 0.1%.
