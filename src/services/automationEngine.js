@@ -11,22 +11,22 @@ export const NODE_TYPES = {
 };
 
 export const TRIGGER_TYPES = {
-  NEW_SUBSCRIBER: { id: 'new_subscriber', label: 'New Subscriber', icon: '👤', description: 'Fires when a contact is added to a list' },
-  TAG_ADDED: { id: 'tag_added', label: 'Tag Added', icon: '🏷️', description: 'Fires when a specific tag is applied' },
-  DATE_BASED: { id: 'date_based', label: 'Date-Based', icon: '📅', description: 'Fires on a specific date or anniversary' },
-  MANUAL: { id: 'manual', label: 'Manual Entry', icon: '▶️', description: 'Manually add contacts to this workflow' },
+  NEW_SUBSCRIBER: { id: 'new_subscriber', label: 'New Subscriber', icon: 'Users', description: 'Fires when a contact is added to a list' },
+  TAG_ADDED: { id: 'tag_added', label: 'Tag Added', icon: 'Tag', description: 'Fires when a specific tag is applied' },
+  DATE_BASED: { id: 'date_based', label: 'Date-Based', icon: 'Calendar', description: 'Fires on a specific date or anniversary' },
+  MANUAL: { id: 'manual', label: 'Manual Entry', icon: 'Play', description: 'Manually add contacts to this workflow' },
 };
 
 export const ACTION_TYPES = {
-  SEND_EMAIL: { id: 'send_email', label: 'Send Email', icon: '📧', description: 'Send an email template' },
-  ADD_TAG: { id: 'add_tag', label: 'Add Tag', icon: '🏷️', description: 'Apply a tag to the contact' },
-  REMOVE_TAG: { id: 'remove_tag', label: 'Remove Tag', icon: '🗑️', description: 'Remove a tag from the contact' },
-  MOVE_SEGMENT: { id: 'move_segment', label: 'Move to Segment', icon: '📂', description: 'Move contact to a different segment' },
+  SEND_EMAIL: { id: 'send_email', label: 'Send Email', icon: 'Mail', description: 'Send an email template' },
+  ADD_TAG: { id: 'add_tag', label: 'Add Tag', icon: 'Tag', description: 'Apply a tag to the contact' },
+  REMOVE_TAG: { id: 'remove_tag', label: 'Remove Tag', icon: 'Trash', description: 'Remove a tag from the contact' },
+  MOVE_SEGMENT: { id: 'move_segment', label: 'Move to Segment', icon: 'Folder', description: 'Move contact to a different segment' },
 };
 
 export const DELAY_TYPES = {
-  WAIT: { id: 'wait', label: 'Wait', icon: '⏳', description: 'Wait for a specified duration' },
-  WAIT_UNTIL: { id: 'wait_until', label: 'Wait Until', icon: '📆', description: 'Wait until a specific date' },
+  WAIT: { id: 'wait', label: 'Wait', icon: 'Clock', description: 'Wait for a specified duration' },
+  WAIT_UNTIL: { id: 'wait_until', label: 'Wait Until', icon: 'Calendar', description: 'Wait until a specific date' },
 };
 
 // Create a workflow node

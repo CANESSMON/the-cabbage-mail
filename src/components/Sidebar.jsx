@@ -1,7 +1,5 @@
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { Badge } from './ui/badge';
-import { Button } from './ui/button';
 import {
   LayoutDashboard,
   Send,
@@ -21,10 +19,10 @@ import {
   ChevronRight,
   Building2,
   ChevronDown,
-  Plus,
   Radio,
-  Sparkles,
   LogOut,
+  Mail,
+  CheckCircle2
 } from 'lucide-react';
 
 const NAV_SECTIONS = [
@@ -71,23 +69,23 @@ export default function Sidebar({ activeTab, setActiveTab, collapsed, setCollaps
 
   return (
     <aside
-      className={`fixed left-0 top-0 bottom-0 z-40 flex flex-col bg-slate-950 border-r border-slate-800/80 transition-all duration-300 ease-in-out ${
+      className={`fixed left-0 top-0 bottom-0 z-40 flex flex-col bg-white/90 backdrop-blur-xl border-r border-slate-200/90 transition-all duration-300 ease-in-out ${
         collapsed ? 'w-[68px]' : 'w-[252px]'
       }`}
     >
       {/* Logo & Brand */}
-      <div className="flex items-center h-16 px-4 border-b border-slate-800/80 shrink-0">
-        <div className="flex items-center space-x-2.5 cursor-pointer min-w-0" onClick={() => setActiveTab('dashboard')}>
-          <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-emerald-500 to-teal-700 flex items-center justify-center text-xl shadow-lg shadow-emerald-950/40 shrink-0">
-            📧
+      <div className="flex items-center h-16 px-4 border-b border-slate-200/80 shrink-0">
+        <div className="flex items-center space-x-3 cursor-pointer min-w-0" onClick={() => setActiveTab('dashboard')}>
+          <div className="w-8 h-8 rounded-lg bg-black text-white flex items-center justify-center font-bold text-sm shrink-0 shadow-xs">
+            <Mail className="w-4 h-4 text-white" />
           </div>
           {!collapsed && (
             <div className="min-w-0">
-              <span className="font-heading font-extrabold text-sm text-slate-100 tracking-tight block leading-tight truncate">
+              <span className="font-heading font-extrabold text-sm text-slate-950 tracking-tight block leading-none truncate">
                 EmailBhejo
               </span>
-              <span className="text-[9px] text-emerald-400 font-mono tracking-wider uppercase block">
-                Email Marketing
+              <span className="text-[10px] text-slate-500 font-mono tracking-wider uppercase block mt-0.5">
+                Infrastructure
               </span>
             </div>
           )}
@@ -100,19 +98,19 @@ export default function Sidebar({ activeTab, setActiveTab, collapsed, setCollaps
           <div className="relative">
             <button
               onClick={() => setClientDropdownOpen(!clientDropdownOpen)}
-              className="w-full flex items-center justify-between bg-slate-900/90 border border-slate-800 hover:border-slate-700 px-3 py-2 rounded-lg text-xs transition-colors"
+              className="w-full flex items-center justify-between bg-slate-100/80 border border-slate-200/90 hover:bg-slate-200/50 px-3 py-2 rounded-lg text-xs transition-colors"
             >
               <div className="flex items-center space-x-2 min-w-0">
-                <Building2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-                <span className="font-semibold text-slate-100 truncate text-[12px]">
+                <Building2 className="w-3.5 h-3.5 text-slate-900 shrink-0" />
+                <span className="font-semibold text-slate-950 truncate text-[12px]">
                   {activeClient?.name || 'Select Workspace'}
                 </span>
               </div>
-              <ChevronDown className={`w-3.5 h-3.5 text-slate-400 shrink-0 transition-transform ${clientDropdownOpen ? 'rotate-180' : ''}`} />
+              <ChevronDown className={`w-3.5 h-3.5 text-slate-500 shrink-0 transition-transform ${clientDropdownOpen ? 'rotate-180' : ''}`} />
             </button>
 
             {clientDropdownOpen && (
-              <div className="absolute left-0 right-0 mt-1.5 bg-slate-900 border border-slate-800 rounded-xl shadow-2xl z-50 p-1.5 animate-in fade-in duration-100">
+              <div className="absolute left-0 right-0 mt-1.5 bg-white border border-slate-200 rounded-xl shadow-lg z-50 p-1.5 animate-in fade-in duration-100">
                 <div className="text-[9px] uppercase font-semibold text-slate-500 px-2 py-1 tracking-wider">
                   Workspaces ({clients.length})
                 </div>
@@ -126,13 +124,13 @@ export default function Sidebar({ activeTab, setActiveTab, collapsed, setCollaps
                       }}
                       className={`w-full text-left px-2.5 py-1.5 rounded-lg text-[11px] flex items-center justify-between transition-colors ${
                         activeClient?.id === client.id
-                          ? 'bg-emerald-500/15 text-emerald-400 font-semibold'
-                          : 'text-slate-300 hover:bg-slate-800'
+                          ? 'bg-slate-950 text-white font-semibold'
+                          : 'text-slate-800 hover:bg-slate-100'
                       }`}
                     >
                       <span className="truncate">{client.name}</span>
                       {activeClient?.id === client.id && (
-                        <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 shrink-0" />
+                        <CheckCircle2 className="w-3 h-3 text-white shrink-0" />
                       )}
                     </button>
                   ))}
@@ -148,7 +146,7 @@ export default function Sidebar({ activeTab, setActiveTab, collapsed, setCollaps
         {NAV_SECTIONS.map((section) => (
           <div key={section.label}>
             {!collapsed && (
-              <div className="text-[9px] uppercase font-semibold text-slate-500 px-2 mb-1 tracking-wider">
+              <div className="text-[9px] uppercase font-bold text-slate-400 px-2.5 mb-1.5 tracking-wider">
                 {section.label}
               </div>
             )}
@@ -165,14 +163,11 @@ export default function Sidebar({ activeTab, setActiveTab, collapsed, setCollaps
                       collapsed ? 'justify-center px-2 py-2.5' : 'px-2.5 py-2 space-x-2.5'
                     } ${
                       isActive
-                        ? 'bg-emerald-500/15 text-emerald-400 shadow-sm'
-                        : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800/60'
+                        ? 'bg-black text-white shadow-xs font-semibold'
+                        : 'text-slate-600 hover:text-slate-950 hover:bg-slate-100'
                     }`}
                   >
-                    {isActive && (
-                      <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-5 bg-emerald-500 rounded-r-full" />
-                    )}
-                    <Icon className={`w-4 h-4 shrink-0 ${isActive ? 'text-emerald-400' : 'text-slate-500 group-hover:text-slate-300'}`} />
+                    <Icon className={`w-4 h-4 shrink-0 ${isActive ? 'text-white' : 'text-slate-500 group-hover:text-slate-900'}`} />
                     {!collapsed && <span className="truncate">{item.label}</span>}
                   </button>
                 );
@@ -183,12 +178,12 @@ export default function Sidebar({ activeTab, setActiveTab, collapsed, setCollaps
       </nav>
 
       {/* Bottom Controls */}
-      <div className="border-t border-slate-800/80 p-2 space-y-1.5 shrink-0">
+      <div className="border-t border-slate-200/80 p-2 space-y-1.5 shrink-0 bg-slate-50/50">
         {/* AWS Status */}
         {!collapsed && (
-          <div className="flex items-center space-x-2 px-2.5 py-1.5 bg-emerald-500/5 rounded-lg">
-            <Radio className="w-3.5 h-3.5 text-emerald-400 animate-pulse" />
-            <span className="text-[10px] font-mono text-emerald-400">AWS SES Connected</span>
+          <div className="flex items-center space-x-2 px-2.5 py-1.5 bg-white border border-slate-200/80 rounded-lg shadow-2xs">
+            <Radio className="w-3.5 h-3.5 text-slate-900" />
+            <span className="text-[10px] font-mono font-medium text-slate-900">AWS SES Active</span>
           </div>
         )}
 
@@ -197,11 +192,11 @@ export default function Sidebar({ activeTab, setActiveTab, collapsed, setCollaps
           <div className={`flex items-center ${collapsed ? 'justify-center' : 'justify-between'} px-2 py-1.5`}>
             {!collapsed && (
               <div className="flex items-center space-x-2 min-w-0">
-                <div className="w-7 h-7 rounded-full bg-gradient-to-br from-emerald-600 to-teal-800 flex items-center justify-center text-[10px] font-bold text-white shrink-0">
+                <div className="w-7 h-7 rounded-full bg-slate-900 flex items-center justify-center text-[10px] font-bold text-white shrink-0">
                   {user.name?.charAt(0)?.toUpperCase()}
                 </div>
                 <div className="min-w-0">
-                  <div className="text-[11px] font-semibold text-slate-200 truncate">{user.name}</div>
+                  <div className="text-[11px] font-semibold text-slate-950 truncate">{user.name}</div>
                   <div className="text-[9px] text-slate-500 truncate">{user.email}</div>
                 </div>
               </div>
@@ -209,7 +204,7 @@ export default function Sidebar({ activeTab, setActiveTab, collapsed, setCollaps
             <button
               onClick={signOut}
               title="Sign Out"
-              className="p-1.5 rounded-md text-slate-500 hover:text-rose-400 hover:bg-rose-500/10 transition-colors shrink-0"
+              className="p-1.5 rounded-md text-slate-400 hover:text-slate-900 hover:bg-slate-200/60 transition-colors shrink-0"
             >
               <LogOut className="w-4 h-4" />
             </button>
@@ -219,7 +214,7 @@ export default function Sidebar({ activeTab, setActiveTab, collapsed, setCollaps
         {/* Collapse Toggle */}
         <button
           onClick={() => setCollapsed(!collapsed)}
-          className="w-full flex items-center justify-center py-1.5 rounded-lg text-slate-500 hover:text-slate-300 hover:bg-slate-800/60 transition-colors"
+          className="w-full flex items-center justify-center py-1.5 rounded-lg text-slate-400 hover:text-slate-900 hover:bg-slate-100 transition-colors"
         >
           {collapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
         </button>
@@ -227,3 +222,4 @@ export default function Sidebar({ activeTab, setActiveTab, collapsed, setCollaps
     </aside>
   );
 }
+

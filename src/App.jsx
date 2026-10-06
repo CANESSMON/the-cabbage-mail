@@ -19,12 +19,9 @@ import AuditLog from './components/AuditLog';
 import SignUpModal from './components/Auth/SignUpModal';
 import SignInModal from './components/Auth/SignInModal';
 import { Button } from './components/ui/button';
-import { Card } from './components/ui/card';
-import { Badge } from './components/ui/badge';
 import {
   Sparkles, Radio, Send, Users, ShieldCheck, BarChart3,
-  Workflow, Palette, Filter, FileText, Key, UsersRound,
-  CreditCard, ClipboardList, Building2
+  Workflow, Palette, Filter, Key, Mail, ArrowRight
 } from 'lucide-react';
 
 /* ──────────────────────────────────────────────
@@ -57,7 +54,7 @@ function AuthenticatedLayout() {
   };
 
   return (
-    <div className="min-h-screen bg-background text-foreground font-sans">
+    <div className="min-h-screen bg-slate-50/70 text-slate-950 font-sans">
       <Sidebar
         activeTab={activeTab}
         setActiveTab={setActiveTab}
@@ -85,85 +82,87 @@ function UnauthenticatedLanding() {
   const [showSignIn, setShowSignIn] = useState(false);
 
   return (
-    <div className="min-h-screen bg-background text-foreground font-sans">
-      {/* Minimal Header */}
-      <header className="sticky top-0 z-40 border-b border-slate-800/80 bg-slate-950/80 backdrop-blur-xl">
+    <div className="min-h-screen bg-slate-50 text-slate-950 font-sans selection:bg-slate-900 selection:text-white">
+      {/* Glass Navigation Bar */}
+      <header className="sticky top-0 z-40 border-b border-slate-200/80 bg-white/80 backdrop-blur-xl">
         <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-          <div className="flex items-center space-x-2.5">
-            <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-emerald-500 to-teal-700 flex items-center justify-center text-xl shadow-lg shadow-emerald-950/40">
-              📧
+          <div className="flex items-center space-x-3">
+            <div className="w-8 h-8 rounded-lg bg-black text-white flex items-center justify-center font-bold text-sm shadow-sm">
+              <Mail className="w-4 h-4 text-white" />
             </div>
             <div>
-              <span className="font-heading font-extrabold text-lg text-slate-100 tracking-tight block leading-tight">EmailBhejo</span>
-              <span className="text-[9px] text-emerald-400 font-mono tracking-wider uppercase block">Email Marketing Platform</span>
+              <span className="font-heading font-extrabold text-base text-slate-950 tracking-tight block leading-none">EmailBhejo</span>
+              <span className="text-[10px] text-slate-500 font-mono tracking-wider uppercase block mt-0.5">Email Marketing Infrastructure</span>
             </div>
           </div>
-          <div className="flex items-center space-x-2">
-            <Button variant="outline" size="sm" onClick={() => setShowSignIn(true)}>Sign In</Button>
-            <Button size="sm" onClick={() => setShowSignUp(true)} className="gap-1.5">
-              <Sparkles className="w-3.5 h-3.5" />
-              Get Started Free
+          <div className="flex items-center space-x-3">
+            <Button variant="ghost" size="sm" onClick={() => setShowSignIn(true)} className="text-slate-700 hover:text-slate-950 font-medium">
+              Sign In
+            </Button>
+            <Button size="sm" onClick={() => setShowSignUp(true)} className="bg-black hover:bg-slate-800 text-white font-medium gap-2 shadow-sm">
+              <span>Get Started</span>
+              <ArrowRight className="w-3.5 h-3.5" />
             </Button>
           </div>
         </div>
       </header>
 
       {/* Hero */}
-      <div className="max-w-5xl mx-auto py-20 px-6 text-center space-y-8">
-        <div className="inline-flex items-center space-x-2 bg-emerald-500/10 border border-emerald-500/20 px-4 py-1.5 rounded-full text-xs font-semibold text-emerald-400 uppercase tracking-wider">
-          <Sparkles className="w-4 h-4" />
-          <span>Full-Featured Email Marketing Platform</span>
+      <div className="max-w-5xl mx-auto py-24 px-6 text-center space-y-8">
+        <div className="inline-flex items-center space-x-2 bg-slate-100 border border-slate-200/80 px-3.5 py-1.5 rounded-full text-xs font-medium text-slate-800 shadow-xs">
+          <Sparkles className="w-3.5 h-3.5 text-slate-900" />
+          <span>AWS SES Powered Infrastructure</span>
         </div>
 
-        <h1 className="text-5xl sm:text-7xl font-extrabold font-heading text-slate-100 tracking-tight leading-[1.1]">
-          Email Marketing<br />
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-teal-300 to-emerald-500">
-            Powered by AWS
+        <h1 className="text-5xl sm:text-7xl font-extrabold font-heading text-slate-950 tracking-tight leading-[1.08]">
+          Clean, Minimalist<br />
+          <span className="text-slate-900 underline decoration-slate-300 decoration-wavy underline-offset-8">
+            Email Marketing
           </span>
         </h1>
 
-        <p className="text-lg text-slate-300 max-w-2xl mx-auto leading-relaxed">
-          Build campaigns with a visual template editor, automate drip sequences, segment your audience, and deliver at scale through AWS SES — all from one dashboard.
+        <p className="text-base sm:text-lg text-slate-600 max-w-2xl mx-auto leading-relaxed font-normal">
+          Build campaigns with a visual block editor, automate drip workflows, segment your contacts, and achieve high deliverability with native AWS SES integration.
         </p>
 
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
-          <Button size="lg" onClick={() => setShowSignUp(true)} className="w-full sm:w-auto text-base gap-2 px-10 py-6 shadow-xl shadow-emerald-950">
-            <Sparkles className="w-5 h-5" />
-            Start Free — No Credit Card
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-4">
+          <Button size="lg" onClick={() => setShowSignUp(true)} className="w-full sm:w-auto text-sm bg-black hover:bg-slate-800 text-white gap-2 px-8 py-5 font-semibold shadow-md">
+            <span>Start Building Free</span>
+            <ArrowRight className="w-4 h-4" />
           </Button>
-          <Button size="lg" variant="outline" onClick={() => setShowSignIn(true)} className="w-full sm:w-auto text-base px-10 py-6">
-            Sign In to Demo
+          <Button size="lg" variant="outline" onClick={() => setShowSignIn(true)} className="w-full sm:w-auto text-sm border-slate-300 bg-white hover:bg-slate-100 text-slate-900 px-8 py-5 font-semibold shadow-xs">
+            Sign In to Console
           </Button>
         </div>
 
-        {/* Feature Grid */}
+        {/* Feature Grid - Solid White Cards on Glass Grey Background */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-16 text-left">
           {[
-            { icon: Palette, title: 'Visual Template Builder', desc: 'Drag-and-drop block editor with 7+ pre-built templates.' },
-            { icon: Workflow, title: 'Automation Flows', desc: 'Welcome series, re-engagement, and birthday drip sequences.' },
-            { icon: BarChart3, title: 'Deep Analytics', desc: 'Open rates, click tracking, bounce monitoring, and growth charts.' },
-            { icon: ShieldCheck, title: 'Enterprise Trust', desc: 'SPF, DKIM, DMARC verification with pre-send spam scoring.' },
-            { icon: Filter, title: 'Smart Segmentation', desc: 'Tag-based and behavioral audience segments with live counts.' },
-            { icon: Radio, title: 'AWS SES Delivery', desc: 'Cloud-native delivery infrastructure. Zero mail server maintenance.' },
-            { icon: Users, title: 'Multi-Workspace', desc: 'Isolated client workspaces with independent audiences and settings.' },
-            { icon: Key, title: 'API & Webhooks', desc: 'Programmatic access with scoped API keys and event hooks.' },
+            { icon: Palette, title: 'Visual Template Builder', desc: 'Drag-and-drop block editor with responsive HTML components.' },
+            { icon: Workflow, title: 'Automation Flows', desc: 'Trigger welcome drips, re-engagements, and event flows.' },
+            { icon: BarChart3, title: 'Analytics & Tracking', desc: 'Open rates, click maps, bounce rates, and subscriber stats.' },
+            { icon: ShieldCheck, title: 'Deliverability Controls', desc: 'DKIM, SPF, DMARC validation with real-time spam scoring.' },
+            { icon: Filter, title: 'Smart Audience Rules', desc: 'Tag-based rules, dynamic segments, and opt-in lists.' },
+            { icon: Radio, title: 'AWS SES Delivery', desc: 'High-throughput cloud mail server infrastructure.' },
+            { icon: Users, title: 'Multi-Workspace', desc: 'Isolated client accounts, teams, and API keys.' },
+            { icon: Key, title: 'API & Webhooks', desc: 'Developer access with REST endpoints and signature hooks.' },
           ].map((f, i) => (
-            <div key={i} className="p-5 rounded-2xl bg-slate-900/60 border border-slate-800 hover:border-slate-700 transition-colors space-y-2">
-              <div className="w-9 h-9 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
-                <f.icon className="w-4.5 h-4.5" />
+            <div key={i} className="p-5 rounded-xl bg-white border border-slate-200/80 shadow-xs hover:border-slate-300 hover:shadow-sm transition-all space-y-2.5">
+              <div className="w-9 h-9 rounded-lg bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-900">
+                <f.icon className="w-4 h-4" />
               </div>
-              <h3 className="font-bold text-sm text-slate-100 font-heading">{f.title}</h3>
-              <p className="text-[11px] text-slate-400 leading-relaxed">{f.desc}</p>
+              <h3 className="font-bold text-sm text-slate-950 font-heading">{f.title}</h3>
+              <p className="text-xs text-slate-500 leading-relaxed font-normal">{f.desc}</p>
             </div>
           ))}
         </div>
       </div>
 
       {/* Footer */}
-      <footer className="border-t border-slate-800/80 bg-slate-950/60 py-6 text-xs text-slate-500">
-        <div className="max-w-7xl mx-auto px-6 text-center flex items-center justify-between">
-          <span>📧 <strong>EmailBhejo</strong> — Full-Featured Email Marketing Platform</span>
-          <span className="font-mono text-emerald-400">AWS SES Powered</span>
+      <footer className="border-t border-slate-200 bg-white py-6 text-xs text-slate-500">
+        <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
+          <span className="font-medium text-slate-900">EmailBhejo &mdash; Minimalist Email Platform</span>
+          <span className="font-mono text-slate-600 text-[11px]">AWS SES Enterprise</span>
         </div>
       </footer>
 
@@ -194,3 +193,4 @@ export default function App() {
     </AuthProvider>
   );
 }
+

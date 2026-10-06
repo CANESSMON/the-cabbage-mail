@@ -348,16 +348,16 @@ export default function FormBuilder() {
                 </button>
               </div>
 
-              <p className="text-[10px] text-center text-slate-500 pt-1">
-                🔒 We respect your privacy. Unsubscribe anytime.
+              <p className="text-[10px] text-center text-slate-500 pt-1 flex items-center justify-center gap-1 font-medium">
+                <span>We respect your privacy. Unsubscribe anytime.</span>
               </p>
             </div>
           </Card>
 
           {/* Embed Code Card */}
-          <Card className="p-5 space-y-3">
+          <Card className="p-5 space-y-3 bg-white border-slate-200">
             <div className="flex items-center justify-between">
-              <h3 className="text-xs font-bold text-slate-200 flex items-center gap-1.5 uppercase tracking-wider">
+              <h3 className="text-xs font-bold text-slate-900 flex items-center gap-1.5 uppercase tracking-wider">
                 <Code2 className="w-4 h-4 text-emerald-400" />
                 Embed Code Snippet
               </h3>
