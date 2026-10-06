@@ -1,0 +1,65 @@
+====================================================================
+🚀 EMAILBHEJO.COM — ACTION ITEMS & MANUAL STEPS FOR YOU
+====================================================================
+
+All code changes have been applied to your project repository! Below is the complete checklist of items that must be completed from your side on AWS Console & Domain DNS panel to make EmailBhejo fully production-ready.
+
+--------------------------------------------------------------------
+📋 STEP-BY-STEP USER CHECKLIST
+--------------------------------------------------------------------
+
+1. 📧 Mandatory Email Addresses to Create
+   Create the following 6 email addresses under your domain (emailbhejo.com):
+   - info@emailbhejo.com        (Real Inbox - AWS account email & main contact)
+   - noreply@emailbhejo.com     (Send-only - Default campaign FROM address)
+   - bounce@emailbhejo.com      (Real Inbox / Forwarder - Monitors hard/soft bounces)
+   - complaints@emailbhejo.com  (Real Inbox / Forwarder - Monitors spam complaints)
+   - postmaster@emailbhejo.com  (Forwarder -> info@emailbhejo.com - RFC standard)
+   - abuse@emailbhejo.com       (Forwarder -> info@emailbhejo.com - RFC standard)
+
+2. 🌐 Verify Domain in AWS SES Console
+   - Go to AWS SES Console (Region: ap-south-1 Mumbai or us-east-1)
+   - Verified Identities -> Create Identity -> Select "Domain" -> Enter: emailbhejo.com
+   - Enable "Use a custom MAIL FROM domain" -> Enter: mail.emailbhejo.com
+   - Select "Easy DKIM" -> 2048-bit key length
+
+3. 🛠️ Add DNS Records to Domain Registrar (GoDaddy/Namecheap/Cloudflare)
+   - Copy the 3 DKIM CNAME records provided by AWS SES.
+   - Add SPF TXT Record: "v=spf1 include:amazonses.com ~all"
+   - Add MAIL FROM MX Record for mail.emailbhejo.com pointing to feedback-smtp.ap-south-1.amazonses.com (Priority 10)
+   - Add DMARC TXT Record (_dmarc.emailbhejo.com): "v=DMARC1; p=none; rua=mailto:info@emailbhejo.com; sp=none; aspf=r"
+
+4. 🔓 Request AWS SES Production Access (Exit Sandbox)
+   - AWS SES Console -> Account Dashboard -> "Request production access"
+   - Select "Marketing", enter website URL https://emailbhejo.com
+   - Submit use case description detailing opt-in lists, List-Unsubscribe headers, bounce/complaint monitoring.
+
+5. 🔑 Create IAM User & Access Keys
+   - AWS IAM Console -> Users -> Create User "emailbhejo-ses-sender"
+   - Attach Policy: AmazonSESFullAccess
+   - Security Credentials -> Create Access Key ("Application running outside AWS")
+   - Copy Access Key ID and Secret Access Key.
+
+6. ⚙️ Update backend/.env File
+   Set the following variables in backend/.env:
+     EMAIL_PROVIDER=AWS
+     AWS_REGION=ap-south-1
+     AWS_ACCESS_KEY_ID=YOUR_IAM_ACCESS_KEY
+     AWS_SECRET_ACCESS_KEY=YOUR_IAM_SECRET_KEY
+     SES_FROM_EMAIL=info@emailbhejo.com
+     SES_FROM_NAME=EmailBhejo
+
+--------------------------------------------------------------------
+✅ SUMMARY OF AUTOMATED CODE CHANGES COMPLETED
+--------------------------------------------------------------------
+1. Brand & Cleanup:
+   - Renamed all "The Cabbage Mail" references to "EmailBhejo".
+   - Removed SNS dependencies (@aws-sdk/client-sns) and junk files.
+2. SES Email Dispatcher:
+   - Switched from AWS SNS to AWS SESv2 (SendEmailCommand).
+   - Added List-Unsubscribe RFC 8058 header support.
+3. Multi-Tenant Broadcasting:
+   - Updated campaign sending logic to query and send to all active workspace subscribers.
+   - Enabled per-tenant custom AWS credentials fallback.
+4. Production Security:
+   - Enforced strict JWT authentication in backend auth middleware.

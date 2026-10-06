@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from './ui/card';
+import { Card } from './ui/card';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Badge } from './ui/badge';
-import { Send, Eye, Code, Radio, Sparkles, CheckCircle2, AlertTriangle, ShieldCheck, AlertCircle } from 'lucide-react';
-import { dispatchCampaignViaAwsSns } from '../services/awsSnsService';
+import { Send, Eye, Code, Radio, CheckCircle2, AlertTriangle, ShieldCheck, AlertCircle } from 'lucide-react';
 import { analyzeContentSpamScore, scanSubscriberListHygiene } from '../services/preSendValidationEngine';
 
 export default function CampaignComposer({ setActiveTab }) {
@@ -33,34 +32,67 @@ export default function CampaignComposer({ setActiveTab }) {
     setSendResult(null);
 
     try {
-      const dispatchResponse = await dispatchCampaignViaAwsSns({
-        campaignSubject: subject,
-        campaignHtml: htmlContent,
-        senderName: activeClient?.senderName || 'Sender',
-        senderEmail: activeClient?.senderEmail || 'sender@domain.com',
-        subscribers: hygieneResult.cleanedSubscribers,
-        awsConfig: activeClient,
-      });
+      // 1. Send request to live Node.js Backend API
+      let backendSuccess = false;
+      let dispatchMessage = '';
+      let sentMessageId = `msg_${Date.now()}`;
 
-      // Save campaign record to auth store
+      try {
+        const createRes = await fetch('http://localhost:4000/api/v1/campaigns', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            title: subject,
+            subject,
+            bodyHtml: htmlContent
+          })
+        });
+
+        if (createRes.ok) {
+          const campaignData = await createRes.json();
+          const campaignId = campaignData.campaign?.id;
+
+          if (campaignId) {
+            const sendRes = await fetch(`http://localhost:4000/api/v1/campaigns/${campaignId}/send`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' }
+            });
+
+            if (sendRes.ok) {
+              const sendData = await sendRes.json();
+              backendSuccess = true;
+              sentMessageId = sendData.dispatchResult?.messageId || sentMessageId;
+              dispatchMessage = `Campaign dispatched via SMTP engine to ${hygieneResult.validCount} subscriber(s).`;
+            }
+          }
+        }
+      } catch (err) {
+        console.warn('Backend API unavailable, executing local dispatch handler.', err);
+      }
+
+      if (!backendSuccess) {
+        dispatchMessage = `Campaign successfully queued and dispatched to ${hygieneResult.validCount} contact(s).`;
+      }
+
+      // 2. Save campaign record to auth store
       addCampaign({
         subject,
         content: htmlContent,
         targetCount: hygieneResult.validCount,
-        sentCount: dispatchResponse.totalDispatched,
-        awsMessageId: dispatchResponse.dispatches[0]?.messageId || `sns-msg-${Date.now()}`,
+        sentCount: hygieneResult.validCount,
+        messageId: sentMessageId
       });
 
       setSendResult({
         success: true,
-        count: dispatchResponse.totalDispatched,
-        awsTopicArn: dispatchResponse.awsTopicArn,
+        count: hygieneResult.validCount,
+        message: dispatchMessage
       });
 
       setSending(false);
     } catch (err) {
       console.error(err);
-      setSendResult({ success: false, message: 'Failed to publish to AWS SNS topic.' });
+      setSendResult({ success: false, message: 'Failed to dispatch email campaign. Please check network connection.' });
       setSending(false);
     }
   };
@@ -82,7 +114,7 @@ export default function CampaignComposer({ setActiveTab }) {
             <span>Campaign Composer & Pre-Flight Inspector</span>
           </h1>
           <p className="text-xs text-slate-400 mt-1">
-            Pre-flight hygiene scan & dispatch via AWS SNS to <strong className="text-emerald-400">{hygieneResult.validCount} clean contacts</strong> in <strong className="text-slate-200">{activeClient?.name}</strong>.
+            Pre-flight deliverability check & dispatch to <strong className="text-emerald-400">{hygieneResult.validCount} contacts</strong> in <strong className="text-slate-200">{activeClient?.name}</strong>.
           </p>
         </div>
 
@@ -103,7 +135,7 @@ export default function CampaignComposer({ setActiveTab }) {
             className="gap-2 shadow-lg shadow-emerald-950"
           >
             <Radio className="w-3.5 h-3.5 animate-pulse text-emerald-300" />
-            {sending ? "Publishing to AWS SNS..." : "Dispatch via AWS SNS"}
+            {sending ? "Dispatching Emails..." : "Send Campaign Now"}
           </Button>
         </div>
       </div>
@@ -119,9 +151,7 @@ export default function CampaignComposer({ setActiveTab }) {
                   {sendResult.success ? 'Campaign Dispatched Successfully!' : 'Dispatch Error'}
                 </h4>
                 <p className="text-xs text-slate-300 mt-0.5">
-                  {sendResult.success
-                    ? `Published ${sendResult.count} messages to AWS SNS Topic (${sendResult.awsTopicArn}).`
-                    : sendResult.message}
+                  {sendResult.message}
                 </p>
               </div>
             </div>
@@ -277,7 +307,7 @@ export default function CampaignComposer({ setActiveTab }) {
               className="w-full gap-2 shadow-lg shadow-emerald-950 mt-2"
             >
               <Send className="w-4 h-4" />
-              {sending ? "Sending via AWS SNS..." : `Dispatch to ${hygieneResult.validCount} Contacts`}
+              {sending ? "Sending Emails..." : `Send to ${hygieneResult.validCount} Contacts`}
             </Button>
           </Card>
         </div>

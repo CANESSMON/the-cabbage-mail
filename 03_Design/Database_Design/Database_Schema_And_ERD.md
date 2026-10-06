@@ -1,0 +1,210 @@
+# 🗄️ Database Design & Schema Specification — The Cabbage Mail
+
+## 1. Entity-Relationship Model Overview
+
+```
++----------------+        +-------------------+        +--------------------+
+|     User       | 1    * |    TeamMember     | *    1 |     Workspace      |
++----------------+        +-------------------+        +--------------------+
+| id (PK)        |<-------| userId (FK)       |------->| id (PK)            |
+| email          |        | workspaceId (FK)  |        | name               |
+| passwordHash   |        | role              |        | ownerId (FK)       |
++----------------+        +-------------------+        | awsRegion          |
+                                                       | awsAccessKeyId     |
+                                                       +---------+----------+
+                                                                 |
+            +----------------------------------------------------+
+            | 1
+            |
+            +-------------------+-------------------+-------------------+-------------------+
+            | *                 | *                 | *                 | *                 | *
+     +------+------+     +------+------+     +------+------+     +------+------+     +------+------+
+     |   Domain    |     | Subscriber  |     |  Campaign   |     | Automation  |     |   Form /    |
+     +-------------+     +-------------+     +-------------+     +-------------+     |  ApiKey/    |
+     | id          |     | id          |     | id          |     | id          |     | AuditLog    |
+     | domainName  |     | email       |     | title       |     | name        |     +-------------+
+     | spfStatus   |     | status      |     | status      |     | triggerType |
+     | dkimStatus  |     | score       |     | sentCount   |     | nodes       |
+     +-------------+     +-------------+     +-------------+     +-------------+
+```
+
+---
+
+## 2. Prisma Schema Definition (`schema.prisma`)
+
+```prisma
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum Role {
+  OWNER
+  ADMIN
+  EDITOR
+  VIEWER
+}
+
+enum CampaignStatus {
+  DRAFT
+  SCHEDULED
+  SENDING
+  SENT
+  PAUSED
+}
+
+model User {
+  id           String       @id @default(uuid())
+  email        String       @unique
+  passwordHash String
+  name         String
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+  teamMembers  TeamMember[]
+  workspaces   Workspace[]  @relation("WorkspaceOwner")
+}
+
+model Workspace {
+  id                 String             @id @default(uuid())
+  name               String
+  ownerId            String
+  owner              User               @relation("WorkspaceOwner", fields: [ownerId], references: [id], onDelete: Cascade)
+  defaultSenderName  String?
+  defaultSenderEmail String?
+  awsRegion          String             @default("us-east-1")
+  awsAccessKeyId     String?
+  awsSecretAccessKey String?
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
+  domains            Domain[]
+  subscribers        Subscriber[]
+  segments           Segment[]
+  campaigns          Campaign[]
+  automations        Automation[]
+  forms              Form[]
+  apiKeys            ApiKey[]
+  teamMembers        TeamMember[]
+  auditLogs          AuditLog[]
+}
+
+model TeamMember {
+  id          String    @id @default(uuid())
+  workspaceId String
+  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  userId      String
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role        Role      @default(EDITOR)
+  status      String    @default("Active")
+  joinedAt    DateTime  @default(now())
+}
+
+model Domain {
+  id                String    @id @default(uuid())
+  workspaceId       String
+  workspace         Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  domainName        String
+  verificationToken String
+  spfStatus         String    @default("PENDING")
+  dkimStatus        String    @default("PENDING")
+  dmarcStatus       String    @default("PENDING")
+  isVerified        Boolean   @default(false)
+  createdAt         DateTime  @default(now())
+
+  @@unique([workspaceId, domainName])
+}
+
+model Subscriber {
+  id          String    @id @default(uuid())
+  workspaceId String
+  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  email       String
+  firstName   String?
+  lastName    String?
+  phone       String?
+  company     String?
+  status      String    @default("Active")
+  score       Int       @default(80)
+  tags        String[]  @default([])
+  createdAt   DateTime  @default(now())
+
+  @@unique([workspaceId, email])
+}
+
+model Segment {
+  id          String    @id @default(uuid())
+  workspaceId String
+  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  name        String
+  conditions  Json
+  createdAt   DateTime  @default(now())
+}
+
+model Campaign {
+  id          String         @id @default(uuid())
+  workspaceId String
+  workspace   Workspace      @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  title       String
+  subject     String
+  bodyHtml    String
+  status      CampaignStatus @default(DRAFT)
+  sentCount   Int            @default(0)
+  openRate    Float          @default(0.0)
+  clickRate   Float          @default(0.0)
+  scheduledAt DateTime?
+  createdAt   DateTime       @default(now())
+}
+
+model Automation {
+  id          String    @id @default(uuid())
+  workspaceId String
+  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  name        String
+  triggerType String
+  nodes       Json
+  status      String    @default("Active")
+  createdAt   DateTime  @default(now())
+}
+
+model Form {
+  id          String    @id @default(uuid())
+  workspaceId String
+  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  name        String
+  title       String
+  description String?
+  buttonText  String    @default("Subscribe")
+  accentColor String    @default("emerald")
+  fields      String[]  @default(["email"])
+  targetTag   String?
+  createdAt   DateTime  @default(now())
+}
+
+model ApiKey {
+  id          String    @id @default(uuid())
+  workspaceId String
+  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  name        String
+  keyPrefix   String
+  secretHash  String
+  scopes      String[]
+  lastUsedAt  DateTime?
+  createdAt   DateTime  @default(now())
+}
+
+model AuditLog {
+  id          String    @id @default(uuid())
+  workspaceId String
+  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  actor       String
+  action      String
+  category    String
+  details     String
+  status      String    @default("success")
+  ip          String?
+  createdAt   DateTime  @default(now())
+}
+```

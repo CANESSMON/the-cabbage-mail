@@ -1,27 +1,59 @@
-# 🥬 The Cabbage Mail
+# 🥬 The Cabbage Mail — Full Stack Email Marketing Platform
 
-**The Cabbage Mail** is a modern, high-performance Email Marketing Tool designed for managing email campaigns, subscribers, templates, automation workflows, and analytics.
-
----
-
-## 📂 Repository Structure
-
-All project documentation, specs, designs, management artifacts, test plans, and release notes are organized directly at the root of the repository:
-
-```
-the-cabbage-mail/
-├── 01_Contract_And_Commercial/  # Proposal, SOW, NDA
-├── 02_Requirements/             # Discovery Notes, BRD, SRS, User Stories
-├── 03_Design/                   # UI/UX, HLD, LLD, API Spec, DB Design
-├── 04_Project_Management/       # Project Plan, Meeting Notes, Risk Register, Status Reports
-├── 05_Development/              # Technical Notes, Code References
-├── 06_QA_And_Testing/           # Test Plan, Test Cases, Bug Reports, UAT
-├── 07_Release_And_Deployment/   # Release Notes, Deployment Guide, Rollback Notes
-└── 08_Handover_And_Support/     # Handover Document, User Guide, Maintenance Records
-```
+**The Cabbage Mail** is a complete email marketing platform built for client onboarding, domain verification, email campaigns, drag-and-drop templates, automation flows, and analytics.
 
 ---
 
-## 🚀 Getting Started
+## 🏗️ Tech Stack
 
-*Project development and documentation are actively tracked in this repository.*
+- **Frontend**: React + Vite + Tailwind CSS + Shadcn UI (`http://localhost:3000`)
+- **Backend API**: Node.js + TypeScript + Express (`http://localhost:4000/api/v1`)
+- **Database Layer**: PostgreSQL + Prisma ORM
+- **Email Delivery**: Dynamic Provider Switch (**Gmail / Universal SMTP**, **AWS SNS / SES**, or **Mock Mode**)
+
+---
+
+## 📁 Project Folder Structure
+
+All documentation and source code are organized cleanly:
+
+```
+email-marketing-tool/
+├── 01_Contract_And_Commercial/  # Commercial agreement & SOW
+├── 02_Requirements/             # SRS, BRD & User Stories
+├── 03_Design/                   # High-Level Design, Low-Level Design, DB Schema & API Specs
+├── 04_Project_Management/       # Project Plan & Status Reports
+├── 05_Development/              # Technical & Architecture Notes
+├── 06_QA_And_Testing/           # Test Cases & Validation Reports
+├── 07_Release_And_Deployment/   # Release Notes & Deployment Guide
+├── 08_Handover_And_Support/     # User Guide & Operations Manual
+├── backend/                     # Node.js + TypeScript REST API Server & Prisma Schema
+└── src/                         # React Web App Source Code
+```
+
+---
+
+## 🚀 How to Run the Project
+
+### 1. Start the Frontend Web App
+```bash
+npm run dev
+```
+Open **`http://localhost:3000`** in your browser.
+
+### 2. Start the Backend API Server
+```bash
+cd backend
+npm start
+```
+Runs the API server on **`http://localhost:4000/api/v1`**.
+
+---
+
+## ⚙️ How to Change Email Provider
+
+Open `backend/.env` and set `EMAIL_PROVIDER`:
+
+- `EMAIL_PROVIDER=SMTP` → Sends via Gmail / SMTP (`smtp.gmail.com`)
+- `EMAIL_PROVIDER=AWS` → Sends via AWS Cloud Infrastructure
+- `EMAIL_PROVIDER=MOCK` → Instant testing without credentials

@@ -1,5 +1,5 @@
 {
-  "name": "the-cabbage-mail",
+  "name": "emailbhejo",
   "private": true,
   "version": "1.0.0",
   "type": "module",
@@ -10,7 +10,6 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@aws-sdk/client-sns": "^3.758.0",
     "@radix-ui/react-dialog": "^1.1.6",
     "@radix-ui/react-dropdown-menu": "^2.1.6",
     "@radix-ui/react-select": "^2.1.6",

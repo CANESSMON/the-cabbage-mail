@@ -58,14 +58,14 @@ export default function Navbar({ activeTab, setActiveTab }) {
           <div className="flex items-center space-x-6">
             <div className="flex items-center space-x-2.5 cursor-pointer" onClick={() => setActiveTab('dashboard')}>
               <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-emerald-500 to-teal-700 flex items-center justify-center text-xl shadow-lg shadow-emerald-950/40">
-                🥬
+                📧
               </div>
               <div>
                 <span className="font-heading font-extrabold text-lg text-slate-100 tracking-tight block leading-tight">
-                  The Cabbage Mail
+                  EmailBhejo
                 </span>
                 <span className="text-[10px] text-emerald-400 font-mono tracking-wider uppercase block">
-                  AWS SNS Delivery
+                  AWS SES Delivery
                 </span>
               </div>
             </div>
@@ -185,7 +185,7 @@ export default function Navbar({ activeTab, setActiveTab }) {
               <div className="flex items-center space-x-3">
                 <div className="hidden sm:flex items-center space-x-2 bg-slate-900/80 px-3 py-1 rounded-full border border-slate-800">
                   <Radio className="w-3.5 h-3.5 text-emerald-400 animate-pulse" />
-                  <span className="text-[11px] font-mono text-emerald-300">AWS SNS Ready</span>
+                  <span className="text-[11px] font-mono text-emerald-300">AWS SES Ready</span>
                 </div>
                 <div className="flex items-center space-x-2 text-xs font-medium text-slate-300 bg-slate-900 border border-slate-800 px-3 py-1.5 rounded-lg">
                   <User className="w-3.5 h-3.5 text-emerald-400" />

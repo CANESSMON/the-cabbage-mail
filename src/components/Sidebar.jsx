@@ -79,12 +79,12 @@ export default function Sidebar({ activeTab, setActiveTab, collapsed, setCollaps
       <div className="flex items-center h-16 px-4 border-b border-slate-800/80 shrink-0">
         <div className="flex items-center space-x-2.5 cursor-pointer min-w-0" onClick={() => setActiveTab('dashboard')}>
           <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-emerald-500 to-teal-700 flex items-center justify-center text-xl shadow-lg shadow-emerald-950/40 shrink-0">
-            🥬
+            📧
           </div>
           {!collapsed && (
             <div className="min-w-0">
               <span className="font-heading font-extrabold text-sm text-slate-100 tracking-tight block leading-tight truncate">
-                The Cabbage Mail
+                EmailBhejo
               </span>
               <span className="text-[9px] text-emerald-400 font-mono tracking-wider uppercase block">
                 Email Marketing
@@ -188,7 +188,7 @@ export default function Sidebar({ activeTab, setActiveTab, collapsed, setCollaps
         {!collapsed && (
           <div className="flex items-center space-x-2 px-2.5 py-1.5 bg-emerald-500/5 rounded-lg">
             <Radio className="w-3.5 h-3.5 text-emerald-400 animate-pulse" />
-            <span className="text-[10px] font-mono text-emerald-400">AWS SNS Connected</span>
+            <span className="text-[10px] font-mono text-emerald-400">AWS SES Connected</span>
           </div>
         )}
 

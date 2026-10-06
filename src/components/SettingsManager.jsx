@@ -3,8 +3,7 @@ import { useAuth } from '../context/AuthContext';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from './ui/card';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
-import { Badge } from './ui/badge';
-import { Settings, Radio, Key, Building2, CheckCircle2, ShieldCheck, Mail } from 'lucide-react';
+import { Settings, CheckCircle2, ShieldCheck, Mail, Server } from 'lucide-react';
 import DomainVerificationWidget from './DomainVerificationWidget';
 
 export default function SettingsManager() {
@@ -13,10 +12,9 @@ export default function SettingsManager() {
   const [senderName, setSenderName] = useState(activeClient?.senderName || '');
   const [senderEmail, setSenderEmail] = useState(activeClient?.senderEmail || '');
   const [replyTo, setReplyTo] = useState(activeClient?.replyTo || '');
-  const [awsRegion, setAwsRegion] = useState(activeClient?.awsRegion || 'us-east-1');
-  const [awsTopicArn, setAwsTopicArn] = useState(activeClient?.awsTopicArn || '');
-  const [awsAccessKey, setAwsAccessKey] = useState('AKIAIOSFODNN7EXAMPLE');
-  const [awsSecretKey, setAwsSecretKey] = useState('wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY');
+  const [smtpUser, setSmtpUser] = useState('PRAFUL101NAYAK@GMAIL.COM');
+  const [smtpHost, setSmtpHost] = useState('smtp.gmail.com');
+  const [smtpPort, setSmtpPort] = useState('587');
 
   const [saved, setSaved] = useState(false);
 
@@ -26,7 +24,7 @@ export default function SettingsManager() {
     setTimeout(() => setSaved(false), 2000);
   };
 
-  const domainName = (senderEmail.split('@')[1]) || 'acmemarketing.com';
+  const domainName = (senderEmail.split('@')[1]) || 'yourcompany.com';
 
   return (
     <div className="space-y-6 max-w-4xl mx-auto">
@@ -34,10 +32,10 @@ export default function SettingsManager() {
       <div>
         <h1 className="text-2xl font-bold font-heading text-slate-100 flex items-center gap-2">
           <Settings className="w-6 h-6 text-emerald-400" />
-          <span>Workspace, Domain & AWS Settings</span>
+          <span>Workspace & Domain Settings</span>
         </h1>
         <p className="text-xs text-slate-400 mt-1">
-          Configure AWS SNS cloud credentials, DNS domain authentication (SPF, DKIM, DMARC), and sender identity for <strong className="text-slate-200">{activeClient?.name}</strong>.
+          Configure DNS domain authentication (SPF, DKIM, DMARC), sender identity, and delivery preferences for <strong className="text-slate-200">{activeClient?.name}</strong>.
         </p>
       </div>
 
@@ -58,10 +56,10 @@ export default function SettingsManager() {
           <CardHeader>
             <CardTitle className="text-base flex items-center gap-2">
               <Mail className="w-4 h-4 text-emerald-400" />
-              <span>Sender Identity & Addresses</span>
+              <span>Sender Identity & Headers</span>
             </CardTitle>
             <CardDescription>
-              Emails sent from this workspace will use these headers when publishing via AWS SNS.
+              Specify default email sender headers displayed to your campaign recipients.
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -87,7 +85,7 @@ export default function SettingsManager() {
               </div>
             </div>
             <div className="space-y-1.5">
-              <label className="text-xs font-medium text-slate-300">Reply-To Address</label>
+              <label className="text-xs font-medium text-slate-300">Reply-To Email Address</label>
               <Input
                 type="email"
                 placeholder="support@acmemarketing.com"
@@ -98,70 +96,40 @@ export default function SettingsManager() {
           </CardContent>
         </Card>
 
-        {/* AWS SNS Infrastructure Section */}
+        {/* Email Engine Delivery Status Section */}
         <Card>
           <CardHeader>
             <CardTitle className="text-base flex items-center gap-2">
-              <Radio className="w-4 h-4 text-emerald-400" />
-              <span>AWS SNS Cloud Infrastructure</span>
+              <Server className="w-4 h-4 text-emerald-400" />
+              <span>Email Engine Dispatcher Status</span>
             </CardTitle>
             <CardDescription>
-              Connect your Amazon SNS Topic for bulk email notification routing and delivery hooks.
+              Current email engine delivery configuration active on your backend server.
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="space-y-1.5 md:col-span-1">
-                <label className="text-xs font-medium text-slate-300">AWS Region</label>
-                <Input
-                  type="text"
-                  placeholder="us-east-1"
-                  value={awsRegion}
-                  onChange={(e) => setAwsRegion(e.target.value)}
-                />
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+              <div className="p-3 bg-slate-950/80 rounded-lg border border-slate-800 space-y-1">
+                <span className="text-slate-400 block text-[11px]">Active Engine Provider</span>
+                <span className="font-semibold text-emerald-400">Google SMTP Server</span>
               </div>
-              <div className="space-y-1.5 md:col-span-2">
-                <label className="text-xs font-medium text-slate-300">Target AWS SNS Topic ARN</label>
-                <Input
-                  type="text"
-                  placeholder="arn:aws:sns:us-east-1:123456789012:MyTopic"
-                  value={awsTopicArn}
-                  onChange={(e) => setAwsTopicArn(e.target.value)}
-                  className="font-mono text-xs"
-                />
+              <div className="p-3 bg-slate-950/80 rounded-lg border border-slate-800 space-y-1">
+                <span className="text-slate-400 block text-[11px]">SMTP Gateway</span>
+                <span className="font-mono text-slate-200">{smtpHost}:{smtpPort}</span>
               </div>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-1.5">
-                <label className="text-xs font-medium text-slate-300">AWS Access Key ID</label>
-                <Input
-                  type="text"
-                  placeholder="AKIA..."
-                  value={awsAccessKey}
-                  onChange={(e) => setAwsAccessKey(e.target.value)}
-                  className="font-mono text-xs"
-                />
-              </div>
-              <div className="space-y-1.5">
-                <label className="text-xs font-medium text-slate-300">AWS Secret Access Key</label>
-                <Input
-                  type="password"
-                  placeholder="••••••••••••••••"
-                  value={awsSecretKey}
-                  onChange={(e) => setAwsSecretKey(e.target.value)}
-                  className="font-mono text-xs"
-                />
+              <div className="p-3 bg-slate-950/80 rounded-lg border border-slate-800 space-y-1">
+                <span className="text-slate-400 block text-[11px]">Authenticated Account</span>
+                <span className="font-mono text-slate-200 truncate block">{smtpUser}</span>
               </div>
             </div>
 
             <div className="p-3 bg-emerald-500/10 border border-emerald-500/20 rounded-lg text-xs text-emerald-300 flex items-center gap-2">
               <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0" />
-              <span>AWS SDK credentials are encrypted locally per client workspace.</span>
+              <span>Active SMTP delivery engine authenticated and ready to dispatch emails.</span>
             </div>
           </CardContent>
           <CardFooter className="flex justify-end">
-            <Button type="submit">Save Workspace Settings</Button>
+            <Button type="submit">Save Settings</Button>
           </CardFooter>
         </Card>
 

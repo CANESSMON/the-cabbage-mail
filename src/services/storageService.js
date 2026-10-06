@@ -1,4 +1,4 @@
-// Initial Mock Storage & State Management for The Cabbage Mail
+// Storage & State Management for The Cabbage Mail
 const STORAGE_KEYS = {
   USERS: 'cabbage_mail_users',
   ACTIVE_USER: 'cabbage_mail_active_user',
@@ -7,102 +7,11 @@ const STORAGE_KEYS = {
   CAMPAIGNS: 'cabbage_mail_campaigns',
 };
 
-// Initial Default Demo User & Client Workspace
-const DEFAULT_USERS = [
-  {
-    id: 'user_demo_1',
-    name: 'Alex Johnson',
-    email: 'alex@acmemarketing.com',
-    password: 'password123',
-    orgName: 'Acme Growth Labs',
-    createdAt: new Date().toISOString(),
-  }
-];
-
-const DEFAULT_CLIENTS = [
-  {
-    id: 'client_1',
-    userId: 'user_demo_1',
-    name: 'Acme Growth Labs',
-    senderName: 'Alex from Acme',
-    senderEmail: 'newsletter@acme.com',
-    replyTo: 'support@acme.com',
-    awsRegion: 'us-east-1',
-    awsTopicArn: 'arn:aws:sns:us-east-1:123456789012:AcmeNewsletterTopic',
-    createdAt: new Date().toISOString(),
-  },
-  {
-    id: 'client_2',
-    userId: 'user_demo_1',
-    name: 'Fresh Greens Apparel',
-    senderName: 'Fresh Greens Team',
-    senderEmail: 'hello@freshgreens.shop',
-    replyTo: 'support@freshgreens.shop',
-    awsRegion: 'us-east-1',
-    awsTopicArn: 'arn:aws:sns:us-east-1:123456789012:FreshGreensPromos',
-    createdAt: new Date().toISOString(),
-  }
-];
-
-const DEFAULT_SUBSCRIBERS = [
-  {
-    id: 'sub_1',
-    clientId: 'client_1',
-    email: 'sarah.connor@example.com',
-    firstName: 'Sarah',
-    lastName: 'Connor',
-    tags: ['Vip', 'Weekly'],
-    status: 'ACTIVE',
-    addedAt: '2026-09-15T10:30:00Z',
-  },
-  {
-    id: 'sub_2',
-    clientId: 'client_1',
-    email: 'david.beck@example.com',
-    firstName: 'David',
-    lastName: 'Beck',
-    tags: ['Newsletter'],
-    status: 'ACTIVE',
-    addedAt: '2026-09-18T14:20:00Z',
-  },
-  {
-    id: 'sub_3',
-    clientId: 'client_1',
-    email: 'elena.rodriguez@example.com',
-    firstName: 'Elena',
-    lastName: 'Rodriguez',
-    tags: ['Lead'],
-    status: 'ACTIVE',
-    addedAt: '2026-09-20T09:12:00Z',
-  },
-  {
-    id: 'sub_4',
-    clientId: 'client_2',
-    email: 'mike.ross@lawfirm.com',
-    firstName: 'Mike',
-    lastName: 'Ross',
-    tags: ['Customer'],
-    status: 'ACTIVE',
-    addedAt: '2026-09-19T11:00:00Z',
-  }
-];
-
-const DEFAULT_CAMPAIGNS = [
-  {
-    id: 'camp_1',
-    clientId: 'client_1',
-    subject: '🚀 Welcome to Acme September Newsletter!',
-    content: '<h1>Hello {{first_name}},</h1><p>We are thrilled to welcome you to our official newsletter. Thank you for subscribing!</p><p><a href="{{unsubscribe_link}}">Unsubscribe</a></p>',
-    senderName: 'Alex from Acme',
-    senderEmail: 'newsletter@acme.com',
-    targetCount: 3,
-    sentCount: 3,
-    bouncedCount: 0,
-    status: 'SENT',
-    sentAt: '2026-09-21T18:00:00Z',
-    awsMessageId: 'sns-msg-99481204812049182'
-  }
-];
+// Clean Initial State (No hardcoded dummy data)
+const DEFAULT_USERS = [];
+const DEFAULT_CLIENTS = [];
+const DEFAULT_SUBSCRIBERS = [];
+const DEFAULT_CAMPAIGNS = [];
 
 export const getStorageItem = (key, defaultValue) => {
   try {
@@ -135,6 +44,16 @@ export const initStorage = () => {
   if (!localStorage.getItem(STORAGE_KEYS.CAMPAIGNS)) {
     setStorageItem(STORAGE_KEYS.CAMPAIGNS, DEFAULT_CAMPAIGNS);
   }
+};
+
+export const clearAllData = () => {
+  localStorage.removeItem(STORAGE_KEYS.USERS);
+  localStorage.removeItem(STORAGE_KEYS.ACTIVE_USER);
+  localStorage.removeItem(STORAGE_KEYS.CLIENTS);
+  localStorage.removeItem(STORAGE_KEYS.SUBSCRIBERS);
+  localStorage.removeItem(STORAGE_KEYS.CAMPAIGNS);
+  localStorage.removeItem('cabbage_audit_logs');
+  initStorage();
 };
 
 export { STORAGE_KEYS };

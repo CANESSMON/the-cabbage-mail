@@ -1,61 +1,43 @@
 # ⚙️ System Requirements Specification (SRS) - The Cabbage Mail
 
-## 1. Functional Requirements
-
-### FR-0: User Authentication & Self-Service Registration
-- **FR-0.1**: Users can register independently by submitting Full Name, Business Email, Password, and Organization Name.
-- **FR-0.2**: Users can log in securely using Email and Password, and log out of active sessions.
-- **FR-0.3**: Automatic provisioning of an isolated workspace upon successful registration.
-- **FR-0.4**: Session state persistence and protected router navigation.
-
-### FR-1: Workspace & Sender Settings
-- **FR-1.1**: User can configure their default Sender Name, Sender Email, and Reply-To Address.
-- **FR-1.2**: User can configure AWS SNS / SES credentials or API connection parameters for their workspace.
-- **FR-1.3**: Support for updating account profile and organization details.
-
-### FR-2: Subscriber & List Management
-- **FR-2.1**: Support creating multiple contact lists per user workspace.
-- **FR-2.2**: Allow CSV batch import of subscribers with fields: Email, First Name, Last Name, Custom Tags.
-- **FR-2.3**: Allow single subscriber manual add/delete/unsubscribe.
-
-### FR-3: Campaign & Email Builder
-- **FR-3.1**: Minimalistic WYSIWYG / HTML email editor.
-- **FR-3.2**: Ability to save draft campaigns and select target subscriber list.
-- **FR-3.3**: Personalization merge tags (e.g., `{{first_name}}`, `{{unsubscribe_link}}`).
-
-### FR-4: AWS SNS / Cloud Infrastructure Integration
-- **FR-4.1**: Integration with AWS SNS (Simple Notification Service) / SES for email message dispatching.
-- **FR-4.2**: Handling bounce and complaint notification events via webhooks/topics.
-- **FR-4.3**: Environment variable / secure key configuration for AWS credentials.
+## 1. Executive Summary & Architecture Paradigm
+The Cabbage Mail is an enterprise-grade multi-tenant email marketing platform built on a decoupled architecture:
+- **Frontend**: React + Vite + Tailwind CSS + Shadcn UI
+- **Backend API**: Node.js + TypeScript + Express.js REST API
+- **Database Layer**: PostgreSQL database with Prisma ORM
+- **Cloud Infrastructure**: AWS Simple Notification Service (SNS) / Simple Email Service (SES)
 
 ---
 
-### 🛡️ Enterprise Trust, Compliance & Verification Requirements
+## 2. Functional Requirements
 
-### FR-5: Domain & Identity Verification (SPF, DKIM, DMARC, MX)
-- **FR-5.1 (TXT Challenge)**: Generate a unique verification token (`cabbage-verify-domain=txt_...`) for clients to publish in DNS.
-- **FR-5.2 (DKIM CNAME Check)**: Provide 3 CNAME DKIM keys for AWS SES domain signing and check live DNS propagation.
-- **FR-5.3 (SPF & DMARC)**: Audit client DNS for valid `v=spf1` and `v=DMARC1` policies prior to granting production sending rights.
-- **FR-5.4 (SES Identity Verification)**: Query AWS SES identity status (`PendingVerification`, `Success`, `Failed`).
+### FR-0: User Authentication, JWT & Workspace Provisioning
+- **FR-0.1 (Self-Service Signup)**: Public registration endpoint accepting Name, Email, Password, and Organization Name.
+- **FR-0.2 (Password Security)**: Passwords hashed with `bcryptjs` (salt round >= 10).
+- **FR-0.3 (JWT Authorization)**: Secure HTTP Bearer token issuance with role-based claims (`Owner`, `Admin`, `Editor`, `Viewer`).
+- **FR-0.4 (Multi-Tenant Workspace)**: Auto-provisioning of primary workspace and isolated database records.
 
-### FR-6: Client Business Vetting & KYC Onboarding
-- **FR-6.1 (Business Profile)**: Collect Website URL, Company Industry, Physical Postal Address (CAN-SPAM required), and Target Monthly Email Volume.
-- **FR-6.2 (Anti-Spam Policy Declaration)**: Require explicit agreement prohibiting purchased, rented, or scraped contact lists.
-- **FR-6.3 (Account Status Pipeline)**: Enforce sending restrictions based on status:
-  - `SANDBOX` (Max 200 emails/day, verified recipient addresses only).
-  - `PENDING_REVIEW` (Under manual/automated domain review).
-  - `VERIFIED_PRODUCTION` (Full sending quota enabled).
-  - `PAUSED_RISK` (Auto-suspended due to high bounce/complaint rates).
+### FR-1: Domain Authentication & DNS Audit (SPF, DKIM, DMARC)
+- **FR-1.1 (DNS Challenge)**: Node.js server executes asynchronous DNS TXT / CNAME lookups using native `dns.promises` API.
+- **FR-1.2 (SPF & DKIM Audit)**: Verification of `v=spf1` policies, 3 CNAME DKIM selectors, and `v=DMARC1` record compliance.
+- **FR-1.3 (AWS SES Identity Status)**: Webhook/API check of AWS SES identity verification state (`Pending`, `Success`, `Failed`).
 
-### FR-7: Pre-Send Campaign Spam & Hygiene Engine
-- **FR-7.1 (List Hygiene)**: Automatically flag & reject invalid syntax emails, temporary/disposable domains (`@mailinator.com`, `@tempmail.com`), and role accounts (`admin@`, `support@`).
-- **FR-7.2 (Spam Content Score)**: Scan campaign subject lines and HTML for high-risk spam triggers (e.g. ALL CAPS, "100% FREE", "ACT NOW", excessive dollar signs `$$$`).
-- **FR-7.3 (Compliance Enforcer)**: Block dispatch if `{{unsubscribe_link}}` or physical sender address is missing from email body.
+### FR-2: Campaign Composition & Pre-Send Hygiene Engine
+- **FR-2.1 (Campaign Engine)**: HTML block editor rendering, variable merge tag substitution (`{{first_name}}`, `{{unsubscribe_link}}`).
+- **FR-2.2 (Deliverability Guard)**: Automated pre-send spam keyword scoring, disposable domain filtering (`@tempmail.com`), and CAN-SPAM compliance check before queueing.
+- **FR-2.3 (AWS SNS Dispatch)**: Bulk dispatch of queued messages to AWS SNS topics using `@aws-sdk/client-sns`.
+
+### FR-3: Audience Segmentation & Automations
+- **FR-3.1 (Dynamic Segments)**: Rule-based evaluation engine for subscriber tags, domain patterns, and engagement scores.
+- **FR-3.2 (Automation Workflow State)**: Node-based automation state execution engine tracking subscriber progress across trigger, action, delay, and condition nodes.
+
+### FR-4: Developer API & Security Governance
+- **FR-4.1 (Scoped API Keys)**: Generation and revocation of API keys with granular scopes (`subscribers.write`, `campaigns.send`, `analytics.read`).
+- **FR-4.2 (Audit Logging)**: System event tracking logging actor IP, timestamp, action type, and status to `AuditLog` database table.
 
 ---
 
-## 2. Non-Functional Requirements
-- **NFR-1 (Performance)**: Fast page load (<1.5s) and responsive UI.
-- **NFR-2 (Security)**: Password hashing, encrypted storage of tokens/keys, strict tenant data isolation.
-- **NFR-3 (Usability)**: Intuitive self-service flow with step-by-step onboarding wizard.
-- **NFR-4 (Reliability & Deliverability Guardrails)**: Asynchronous queue processing; auto-pause workspace if bounce rate > 5% or complaint rate > 0.1%.
+## 3. Database & System Non-Functional Requirements (NFR)
+- **NFR-1 (Database Integrity)**: Foreign key constraints, cascade rules, and indexing on `workspace_id`, `email`, and `created_at` fields.
+- **NFR-2 (API Throughput)**: Sub-100ms response time for core CRUD endpoints.
+- **NFR-3 (Multi-Tenant Isolation)**: All Prisma query calls scoped strictly by `workspaceId`.

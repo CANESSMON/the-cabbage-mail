@@ -13,13 +13,11 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     initStorage();
     const savedUser = getStorageItem(STORAGE_KEYS.ACTIVE_USER, null);
-    const allUsers = getStorageItem(STORAGE_KEYS.USERS, []);
-    
-    // Auto login demo user if no active user
-    const currentUser = savedUser || allUsers[0] || null;
-    if (currentUser) {
-      setUser(currentUser);
-      loadUserData(currentUser.id);
+    if (savedUser) {
+      setUser(savedUser);
+      loadUserData(savedUser.id);
+    } else {
+      setUser(null);
     }
   }, []);
 
@@ -72,6 +70,7 @@ export const AuthProvider = ({ children }) => {
     setStorageItem(STORAGE_KEYS.USERS, updatedUsers);
     setStorageItem(STORAGE_KEYS.CLIENTS, updatedClients);
     setStorageItem(STORAGE_KEYS.ACTIVE_USER, newUser);
+    localStorage.setItem('cabbage_auth_token', `token_${newUser.id}_${Date.now()}`);
 
     setUser(newUser);
     setClients([newClient]);
@@ -90,6 +89,7 @@ export const AuthProvider = ({ children }) => {
     }
 
     setStorageItem(STORAGE_KEYS.ACTIVE_USER, foundUser);
+    localStorage.setItem('cabbage_auth_token', `token_${foundUser.id}_${Date.now()}`);
     setUser(foundUser);
     loadUserData(foundUser.id);
     return foundUser;
@@ -97,6 +97,7 @@ export const AuthProvider = ({ children }) => {
 
   const signOut = () => {
     localStorage.removeItem(STORAGE_KEYS.ACTIVE_USER);
+    localStorage.removeItem('cabbage_auth_token');
     setUser(null);
     setActiveClient(null);
   };

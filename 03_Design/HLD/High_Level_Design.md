@@ -1,58 +1,66 @@
 # 🏗️ High-Level Design (HLD) - The Cabbage Mail
 
-## 1. System Architecture Overview
+## 1. Complete System Architecture
 
 ```
- +-------------------------------------------------------------------+
- |                       The Cabbage Mail Web App                    |
- |                                                                   |
- |  +-----------------------+  +-------------------+  +-----------+  |
- |  | Auth & Self-Service   |  | Domain & KYC      |  | Delivery  |  |
- |  | Registration Module   |  | Verification      |  | Queue     |  |
- |  +-----------+-----------+  +---------+---------+  +-----+-----+  |
- |              |                        |                  |        |
- |              v                        v                  v        |
- |  +-----------------------+  +-------------------+                 |
- |  | Pre-Send Spam & List  |  | Campaign & List   |                 |
- |  | Hygiene Engine        |  | Engine            |                 |
- |  +-----------------------+  +-------------------+                 |
- +--------------|------------------------|------------------|--------+
-                |                        |                  |
-                v                        v                  v
- +-------------------------------------------------------------------+
- |                        Database / Storage                         |
- |  (Users | Workspaces | DNS Records | Spam Scores | AWS Configs)   |
- +-------------------------------------------------------------------+
-                                         |
-                                         v
- +-------------------------------------------------------------------+
- |                 AWS Cloud Infrastructure Integration              |
- |                                                                   |
- |  +-----------------------+             +-----------------------+  |
- |  |   Amazon SNS / SES    | ----------->|   Recipient Inboxes   |  |
- |  |   Email Dispatcher    |             |                       |  |
- |  +-----------------------+             +-----------------------+  |
- +-------------------------------------------------------------------+
+                                  +---------------------------------------+
+                                  |         React Single Page App         |
+                                  |     (Vite + Tailwind + Shadcn UI)     |
+                                  +-------------------+-------------------+
+                                                      |
+                                                      | HTTPS / REST API
+                                                      v
+                                  +---------------------------------------+
+                                  |      Node.js + TypeScript REST API    |
+                                  |            (Express.js)               |
+                                  |                                       |
+                                  |  +-----------------+ +-------------+  |
+                                  |  | Auth Middleware | | DNS Auditing|  |
+                                  |  |   (JWT Guard)   | |  (SPF/DKIM) |  |
+                                  |  +--------+--------+ +------+------+  |
+                                  |           |                 |         |
+                                  |  +--------v--------+ +------v------+  |
+                                  |  |  Pre-Send Guard | | Campaign    |  |
+                                  |  |  Spam Scoring   | | Dispatcher  |  |
+                                  |  +-----------------+ +-------------+  |
+                                  +---------+-------------------+---------+
+                                            |                   |
+                     Database Queries       |                   | AWS SNS SDK
+                      (Prisma Client)       v                   v
++--------------------------------------------------+  +----------------------------------+
+|               PostgreSQL Database                |  |        AWS Cloud Infrastructure  |
+|                                                  |  |                                  |
+| (Users, Workspaces, Domains, Subscribers,        |  |  +----------------------------+  |
+|  Campaigns, Automations, Forms, API Keys, Logs)  |  |  |   Amazon SNS / SES Topics  |  |
++--------------------------------------------------+  |  +--------------+-------------+  |
+                                                      +-----------------|----------------+
+                                                                        |
+                                                                        v
+                                                      +----------------------------------+
+                                                      |        Recipient Inboxes         |
+                                                      +----------------------------------+
 ```
 
 ---
 
-## 2. Core Modules
+## 2. Core Service Components
 
-1. **Self-Service Authentication & Tenant Module**: Manages user registration, workspace creation, session security, and client profiles.
-2. **Domain Authentication & KYC Verification Engine**: Audits DNS TXT/CNAME records (SPF, DKIM, DMARC), website URLs, and physical postal addresses for CAN-SPAM compliance.
-3. **Pre-Send Spam & List Hygiene Engine**: Cleans disposable email addresses, flags role accounts, and calculates content spam scores (0-100).
-4. **Subscriber & Audience Module**: Manages contact lists, CSV import parser, and opt-out unsubscribe lists.
-5. **Campaign Composition Module**: WYSIWYG email editor with merge tags (`{{first_name}}`), live preview, and compliance validator.
-6. **AWS Delivery Adapter**: Integrates AWS SDK for dispatching bulk notifications/emails via AWS SNS/SES topics.
-7. **Deliverability & Reputation Guardrails**: Monitors bounce (<5%) and complaint (<0.1%) thresholds, automatically enforcing workspace safeguards.
+1. **Authentication & Identity Service**: Handles user registration, password hashing (`bcrypt`), JWT token generation, and tenant middleware.
+2. **Domain & DNS Resolver Service**: Asynchronously audits DNS TXT/CNAME records using Node.js native `dns.promises` to verify SPF, DKIM, and DMARC setups.
+3. **Pre-Send Hygiene Engine**: Evaluates subscriber syntax, filters disposable email domains, and scores HTML campaign bodies against spam filters.
+4. **Campaign & Dispatch Service**: Manages campaign drafts, schedules, recipient list resolution, and AWS SNS payload generation.
+5. **Automation & Sequence Engine**: Executes node graph workflows, handling triggers, delay timers, and action nodes.
+6. **Data Access Layer (Prisma ORM)**: Type-safe access layer connected to PostgreSQL with connection pooling.
 
 ---
 
-## 3. Technology Stack Selection (Minimalist & Modern)
-- **Frontend Framework**: React + Vite + Tailwind CSS.
-- **UI Components & Icons**: **Shadcn UI** component primitives (Radix UI) + Lucide Icons (`lucide-react`).
-- **Typography Standards**: `Plus Jakarta Sans` (Headings), `Inter` (Body & UI controls), `JetBrains Mono` (Merge tags & Code). See details in [`03_Design/UI_UX/Typography_And_Design_System.md`](file:///d:/email%20marketing%20tool/03_Design/UI_UX/Typography_And_Design_System.md).
-- **Security & Deliverability Specs**: See [`03_Design/Security_And_Compliance/Domain_Verification_And_Deliverability_Spec.md`](file:///d:/email%20marketing%20tool/03_Design/Security_And_Compliance/Domain_Verification_And_Deliverability_Spec.md).
-- **Backend / Delivery Engine**: Node.js API handlers with AWS SDK (`@aws-sdk/client-sns`).
-- **Data Persistence**: Local store for users, workspace settings, DNS verification records, contacts, and campaigns.
+## 3. Technology Stack Specification
+
+| Tier | Technology | Purpose |
+|---|---|---|
+| **Frontend** | React 18, Vite, Tailwind CSS, Shadcn UI, Lucide Icons | Responsive Client Web App |
+| **Backend API** | Node.js, Express, TypeScript, Zod | Type-safe REST API Server |
+| **Database** | PostgreSQL | Relational Multi-Tenant Storage |
+| **ORM** | Prisma ORM | Schema migrations & type-safe DB client |
+| **Infrastructure** | AWS SNS / SES (`@aws-sdk/client-sns`) | Enterprise Email Dispatch |
+| **Security** | JWT (`jsonwebtoken`), Bcrypt (`bcryptjs`), Cors | Authentication & Data Hygiene |
