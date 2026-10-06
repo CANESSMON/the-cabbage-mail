@@ -3,21 +3,21 @@ import { cva } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 disabled:pointer-events-none disabled:opacity-50 active:scale-[0.98]",
+  "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-950 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 active:scale-[0.98]",
   {
     variants: {
       variant: {
         default:
-          "bg-emerald-600 text-white hover:bg-emerald-500 shadow-sm shadow-emerald-900/30",
+          "bg-black text-white hover:bg-slate-800 shadow-sm",
         destructive:
-          "bg-rose-600 text-white hover:bg-rose-500 shadow-sm shadow-rose-900/30",
+          "bg-rose-600 text-white hover:bg-rose-700 shadow-sm",
         outline:
-          "border border-slate-800 bg-slate-900/50 hover:bg-slate-800 hover:text-slate-100 text-slate-300",
+          "border border-slate-300 bg-white hover:bg-slate-100 hover:text-slate-950 text-slate-800 shadow-sm",
         secondary:
-          "bg-slate-800 text-slate-100 hover:bg-slate-700",
+          "bg-slate-100 text-slate-900 hover:bg-slate-200 border border-slate-200",
         ghost:
-          "hover:bg-slate-800/80 hover:text-slate-100 text-slate-300",
-        link: "text-emerald-400 underline-offset-4 hover:underline",
+          "hover:bg-slate-100 hover:text-slate-950 text-slate-700",
+        link: "text-slate-950 underline-offset-4 hover:underline font-medium",
       },
       size: {
         default: "h-9 px-4 py-2",

@@ -10,9 +10,9 @@ import { analyzeContentSpamScore, scanSubscriberListHygiene } from '../services/
 export default function CampaignComposer({ setActiveTab }) {
   const { activeClient, subscribers, addCampaign } = useAuth();
 
-  const [subject, setSubject] = useState('Exclusive Update from ' + (activeClient?.name || 'Cabbage Mail'));
+  const [subject, setSubject] = useState('Exclusive Update from ' + (activeClient?.name || 'EmailBhejo'));
   const [htmlContent, setHtmlContent] = useState(
-    `<h1>Hello {{first_name}},</h1>\n<p>We are excited to share our latest product updates with you.</p>\n<p>Thank you for being a valued subscriber!</p>\n<p><a href="{{unsubscribe_link}}">Unsubscribe</a></p>`
+    `<h1>Hello {{first_name}},</h1>\n<p>We are excited to share our latest product updates with you.</p>\n<p>Thank you for being a valued subscriber.</p>\n<p><a href="{{unsubscribe_link}}">Unsubscribe</a></p>`
   );
   const [isPreview, setIsPreview] = useState(false);
   const [sending, setSending] = useState(false);
@@ -32,7 +32,6 @@ export default function CampaignComposer({ setActiveTab }) {
     setSendResult(null);
 
     try {
-      // 1. Send request to live Node.js Backend API
       let backendSuccess = false;
       let dispatchMessage = '';
       let sentMessageId = `msg_${Date.now()}`;
@@ -74,7 +73,6 @@ export default function CampaignComposer({ setActiveTab }) {
         dispatchMessage = `Campaign successfully queued and dispatched to ${hygieneResult.validCount} contact(s).`;
       }
 
-      // 2. Save campaign record to auth store
       addCampaign({
         subject,
         content: htmlContent,
@@ -97,7 +95,6 @@ export default function CampaignComposer({ setActiveTab }) {
     }
   };
 
-  // Preview interpolation with sample data
   const previewSampleHtml = htmlContent
     .replace(/\{\{\s*first_name\s*\}\}/g, 'Alex')
     .replace(/\{\{\s*last_name\s*\}\}/g, 'Taylor')
@@ -109,12 +106,12 @@ export default function CampaignComposer({ setActiveTab }) {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold font-heading text-slate-100 flex items-center gap-2">
-            <Send className="w-6 h-6 text-emerald-400" />
+          <h1 className="text-2xl font-extrabold font-heading text-slate-950 tracking-tight flex items-center gap-2">
+            <Send className="w-6 h-6 text-slate-900" />
             <span>Campaign Composer & Pre-Flight Inspector</span>
           </h1>
-          <p className="text-xs text-slate-400 mt-1">
-            Pre-flight deliverability check & dispatch to <strong className="text-emerald-400">{hygieneResult.validCount} contacts</strong> in <strong className="text-slate-200">{activeClient?.name}</strong>.
+          <p className="text-xs text-slate-600 mt-1">
+            Pre-flight deliverability check & dispatch to <strong className="text-slate-950 font-bold">{hygieneResult.validCount} contacts</strong> in <strong className="text-slate-950 font-bold">{activeClient?.name}</strong>.
           </p>
         </div>
 
@@ -123,7 +120,7 @@ export default function CampaignComposer({ setActiveTab }) {
             variant={isPreview ? "default" : "outline"}
             size="sm"
             onClick={() => setIsPreview(!isPreview)}
-            className="gap-1.5 text-xs"
+            className="gap-1.5 text-xs border-slate-300 text-slate-900 bg-white hover:bg-slate-100 font-semibold"
           >
             {isPreview ? <Code className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
             {isPreview ? "Switch to Editor" : "Live HTML Preview"}
@@ -132,31 +129,31 @@ export default function CampaignComposer({ setActiveTab }) {
             size="sm"
             onClick={handleSendCampaign}
             disabled={sending || hygieneResult.validCount === 0 || !spamAnalysis.canDispatch}
-            className="gap-2 shadow-lg shadow-emerald-950"
+            className="gap-2 bg-black hover:bg-slate-800 text-white font-semibold shadow-xs"
           >
-            <Radio className="w-3.5 h-3.5 animate-pulse text-emerald-300" />
-            {sending ? "Dispatching Emails..." : "Send Campaign Now"}
+            <Radio className="w-3.5 h-3.5 text-white animate-pulse" />
+            {sending ? "Dispatching..." : "Send Campaign Now"}
           </Button>
         </div>
       </div>
 
       {/* Success Notification */}
       {sendResult && (
-        <Card className={`p-4 border ${sendResult.success ? 'border-emerald-500/30 bg-emerald-950/30 text-emerald-300' : 'border-rose-500/30 bg-rose-950/30 text-rose-300'} animate-in fade-in duration-200`}>
+        <Card className={`p-4 border ${sendResult.success ? 'border-slate-300 bg-slate-100 text-slate-950' : 'border-rose-300 bg-rose-50 text-rose-950'} animate-in fade-in duration-200`}>
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
-              {sendResult.success ? <CheckCircle2 className="w-5 h-5 text-emerald-400" /> : <AlertCircle className="w-5 h-5 text-rose-400" />}
+              {sendResult.success ? <CheckCircle2 className="w-5 h-5 text-slate-950" /> : <AlertCircle className="w-5 h-5 text-rose-600" />}
               <div>
-                <h4 className="font-semibold text-sm font-heading">
-                  {sendResult.success ? 'Campaign Dispatched Successfully!' : 'Dispatch Error'}
+                <h4 className="font-bold text-sm font-heading">
+                  {sendResult.success ? 'Campaign Dispatched Successfully' : 'Dispatch Error'}
                 </h4>
-                <p className="text-xs text-slate-300 mt-0.5">
+                <p className="text-xs text-slate-600 mt-0.5">
                   {sendResult.message}
                 </p>
               </div>
             </div>
             {sendResult.success && (
-              <Button size="sm" variant="outline" onClick={() => setActiveTab('dashboard')} className="text-xs">
+              <Button size="sm" variant="outline" onClick={() => setActiveTab('dashboard')} className="text-xs border-slate-300 text-slate-900">
                 View Dashboard Stats
               </Button>
             )}
@@ -169,11 +166,11 @@ export default function CampaignComposer({ setActiveTab }) {
         
         {/* Left 2 Cols: Editor or Preview */}
         <div className="lg:col-span-2 space-y-4">
-          <Card className="p-6 space-y-4">
+          <Card className="bg-white border-slate-200/90 p-6 space-y-4 shadow-2xs">
             
             {/* Subject Line */}
             <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-slate-300 uppercase tracking-wider block">
+              <label className="text-xs font-bold text-slate-900 uppercase tracking-wider block">
                 Email Subject Line *
               </label>
               <Input
@@ -181,31 +178,31 @@ export default function CampaignComposer({ setActiveTab }) {
                 placeholder="e.g. September Product Announcements"
                 value={subject}
                 onChange={(e) => setSubject(e.target.value)}
-                className="font-medium text-slate-100"
+                className="font-medium text-slate-950 bg-slate-50 border-slate-200 focus:bg-white focus:border-slate-900"
               />
             </div>
 
             {/* Merge Tag Chips */}
             <div className="flex items-center space-x-2 text-xs py-1">
-              <span className="text-slate-400 text-[11px] font-medium uppercase tracking-wider">Merge Tags:</span>
+              <span className="text-slate-500 text-[11px] font-bold uppercase tracking-wider">Merge Tags:</span>
               <button
                 type="button"
                 onClick={() => handleInsertTag('{{first_name}}')}
-                className="font-mono text-[11px] bg-slate-800 hover:bg-slate-700 text-emerald-400 px-2 py-0.5 rounded border border-slate-700"
+                className="font-mono text-[11px] bg-slate-100 hover:bg-slate-200 text-slate-900 px-2 py-0.5 rounded border border-slate-200 font-semibold"
               >
                 + &#123;&#123;first_name&#125;&#125;
               </button>
               <button
                 type="button"
                 onClick={() => handleInsertTag('{{last_name}}')}
-                className="font-mono text-[11px] bg-slate-800 hover:bg-slate-700 text-emerald-400 px-2 py-0.5 rounded border border-slate-700"
+                className="font-mono text-[11px] bg-slate-100 hover:bg-slate-200 text-slate-900 px-2 py-0.5 rounded border border-slate-200 font-semibold"
               >
                 + &#123;&#123;last_name&#125;&#125;
               </button>
               <button
                 type="button"
                 onClick={() => handleInsertTag('{{unsubscribe_link}}')}
-                className="font-mono text-[11px] bg-slate-800 hover:bg-slate-700 text-teal-400 px-2 py-0.5 rounded border border-slate-700"
+                className="font-mono text-[11px] bg-slate-100 hover:bg-slate-200 text-slate-900 px-2 py-0.5 rounded border border-slate-200 font-semibold"
               >
                 + &#123;&#123;unsubscribe_link&#125;&#125;
               </button>
@@ -213,14 +210,14 @@ export default function CampaignComposer({ setActiveTab }) {
 
             {/* HTML Editor or Preview */}
             <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-slate-300 uppercase tracking-wider flex items-center justify-between">
+              <label className="text-xs font-bold text-slate-900 uppercase tracking-wider flex items-center justify-between">
                 <span>{isPreview ? "Live Rendered Preview" : "HTML Email Content"}</span>
-                <span className="text-[10px] font-mono text-slate-400 lowercase">{isPreview ? "Sample Recipient: Alex Taylor" : "HTML + JetBrains Mono Tags"}</span>
+                <span className="text-[10px] font-mono text-slate-500 lowercase">{isPreview ? "Sample Recipient: Alex Taylor" : "HTML Tags"}</span>
               </label>
 
               {isPreview ? (
                 <div
-                  className="w-full min-h-[300px] bg-white text-slate-900 rounded-lg p-6 font-sans text-sm shadow-inner overflow-auto prose max-w-none"
+                  className="w-full min-h-[300px] bg-slate-50 text-slate-950 rounded-lg p-6 font-sans text-sm border border-slate-200 overflow-auto prose max-w-none"
                   dangerouslySetInnerHTML={{ __html: previewSampleHtml }}
                 />
               ) : (
@@ -228,7 +225,7 @@ export default function CampaignComposer({ setActiveTab }) {
                   rows="12"
                   value={htmlContent}
                   onChange={(e) => setHtmlContent(e.target.value)}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-lg p-4 font-mono text-xs text-slate-100 focus:outline-none focus:border-emerald-500 leading-relaxed"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-lg p-4 font-mono text-xs text-slate-950 focus:outline-none focus:border-slate-900 focus:bg-white leading-relaxed"
                 />
               )}
             </div>
@@ -238,31 +235,31 @@ export default function CampaignComposer({ setActiveTab }) {
 
         {/* Right 1 Col: Pre-Flight Inspection & Deliverability Panel */}
         <div className="space-y-4">
-          <Card className="p-5 space-y-4 border-slate-800">
-            <h3 className="text-sm font-bold font-heading text-slate-100 flex items-center gap-2">
-              <ShieldCheck className="w-4 h-4 text-emerald-400" />
+          <Card className="bg-white border-slate-200/90 p-5 space-y-4 shadow-2xs">
+            <h3 className="text-sm font-bold font-heading text-slate-950 flex items-center gap-2">
+              <ShieldCheck className="w-4 h-4 text-slate-900" />
               <span>Pre-Flight Inspection & Spam Score</span>
             </h3>
 
             {/* Live Spam Score Indicator */}
-            <div className="p-3 bg-slate-950/80 rounded-lg border border-slate-800 space-y-2">
+            <div className="p-3 bg-slate-50 rounded-lg border border-slate-200 space-y-2">
               <div className="flex items-center justify-between text-xs">
-                <span className="text-slate-400">Content Spam Score</span>
-                <Badge variant={spamAnalysis.badgeColor === 'emerald' ? 'default' : 'destructive'} className="text-[10px]">
+                <span className="text-slate-600 font-medium">Content Spam Risk</span>
+                <Badge variant="outline" className="text-[10px] border-slate-300 text-slate-950 font-bold bg-white">
                   {spamAnalysis.rating}
                 </Badge>
               </div>
               <div className="flex items-baseline space-x-2">
-                <span className={`text-2xl font-extrabold font-heading ${spamAnalysis.spamScore === 0 ? 'text-emerald-400' : 'text-amber-400'}`}>
+                <span className="text-2xl font-extrabold font-heading text-slate-950">
                   {spamAnalysis.spamScore}
                 </span>
-                <span className="text-xs text-slate-500">/ 100 Risk Points</span>
+                <span className="text-xs text-slate-500 font-medium">/ 100 Risk Points</span>
               </div>
               {spamAnalysis.triggersFound.length > 0 && (
-                <div className="text-[11px] text-amber-400/90 space-y-0.5 pt-1 border-t border-slate-800">
+                <div className="text-[11px] text-slate-700 space-y-0.5 pt-1 border-t border-slate-200">
                   {spamAnalysis.triggersFound.map((t, idx) => (
                     <div key={idx} className="flex items-center gap-1">
-                      <AlertTriangle className="w-3 h-3 text-amber-400 shrink-0" /> {t}
+                      <AlertTriangle className="w-3 h-3 text-slate-700 shrink-0" /> {t}
                     </div>
                   ))}
                 </div>
@@ -270,14 +267,14 @@ export default function CampaignComposer({ setActiveTab }) {
             </div>
 
             {/* List Hygiene Summary */}
-            <div className="p-3 bg-slate-950/80 rounded-lg border border-slate-800 space-y-1 text-xs">
-              <span className="text-slate-400 block text-[11px]">List Hygiene Inspection</span>
-              <div className="flex justify-between items-center text-slate-200">
-                <span>Clean Active Contacts</span>
-                <strong className="text-emerald-400 font-mono">{hygieneResult.validCount}</strong>
+            <div className="p-3 bg-slate-50 rounded-lg border border-slate-200 space-y-1 text-xs">
+              <span className="text-slate-500 block text-[11px] font-bold uppercase tracking-wider">List Hygiene Inspection</span>
+              <div className="flex justify-between items-center text-slate-950 pt-1">
+                <span className="font-medium">Clean Active Contacts</span>
+                <strong className="text-slate-950 font-mono font-bold">{hygieneResult.validCount}</strong>
               </div>
               {hygieneResult.disposableCount > 0 && (
-                <div className="flex justify-between items-center text-rose-400 text-[11px]">
+                <div className="flex justify-between items-center text-slate-600 text-[11px]">
                   <span>Disposable Emails Rejected</span>
                   <strong className="font-mono">-{hygieneResult.disposableCount}</strong>
                 </div>
@@ -285,17 +282,17 @@ export default function CampaignComposer({ setActiveTab }) {
             </div>
 
             {/* CAN-SPAM Compliance Check */}
-            <div className="p-3 bg-slate-950/80 rounded-lg border border-slate-800 space-y-1.5 text-xs">
-              <span className="text-slate-400 block text-[11px]">CAN-SPAM Legal Checklist</span>
-              <div className="flex items-center gap-1.5 text-slate-300">
-                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+            <div className="p-3 bg-slate-50 rounded-lg border border-slate-200 space-y-1.5 text-xs">
+              <span className="text-slate-500 block text-[11px] font-bold uppercase tracking-wider">CAN-SPAM Legal Checklist</span>
+              <div className="flex items-center gap-1.5 text-slate-900 font-medium">
+                <CheckCircle2 className="w-3.5 h-3.5 text-slate-950" />
                 <span>Verified Sender Address</span>
               </div>
-              <div className="flex items-center gap-1.5 text-slate-300">
+              <div className="flex items-center gap-1.5 text-slate-900 font-medium">
                 {htmlContent.includes('{{unsubscribe_link}}') || htmlContent.toLowerCase().includes('unsubscribe') ? (
-                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+                  <CheckCircle2 className="w-3.5 h-3.5 text-slate-950" />
                 ) : (
-                  <AlertCircle className="w-3.5 h-3.5 text-rose-400" />
+                  <AlertCircle className="w-3.5 h-3.5 text-slate-600" />
                 )}
                 <span>Unsubscribe Header Link</span>
               </div>
@@ -304,10 +301,10 @@ export default function CampaignComposer({ setActiveTab }) {
             <Button
               onClick={handleSendCampaign}
               disabled={sending || hygieneResult.validCount === 0 || !spamAnalysis.canDispatch}
-              className="w-full gap-2 shadow-lg shadow-emerald-950 mt-2"
+              className="w-full gap-2 bg-black hover:bg-slate-800 text-white font-bold shadow-xs mt-2"
             >
               <Send className="w-4 h-4" />
-              {sending ? "Sending Emails..." : `Send to ${hygieneResult.validCount} Contacts`}
+              {sending ? "Sending..." : `Send to ${hygieneResult.validCount} Contacts`}
             </Button>
           </Card>
         </div>
@@ -316,3 +313,4 @@ export default function CampaignComposer({ setActiveTab }) {
     </div>
   );
 }
+

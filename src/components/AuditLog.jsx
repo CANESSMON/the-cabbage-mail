@@ -4,8 +4,8 @@ import { Button } from './ui/button';
 import { Badge } from './ui/badge';
 import { auditService } from '../services/auditService';
 import {
-  ClipboardList, Search, Download, Trash2, Filter, ShieldCheck,
-  Send, Users, Key, CreditCard, RefreshCw, AlertTriangle, CheckCircle2,
+  ClipboardList, Search, Download, Trash2, Filter,
+  Send, Key, CreditCard, RefreshCw, AlertTriangle, CheckCircle2,
   Workflow, UserPlus, Globe
 } from 'lucide-react';
 
@@ -60,14 +60,14 @@ export default function AuditLog() {
 
   const getCategoryIcon = (category) => {
     switch (category) {
-      case 'Campaigns': return <Send className="w-3.5 h-3.5 text-blue-400" />;
-      case 'Automations': return <Workflow className="w-3.5 h-3.5 text-purple-400" />;
-      case 'Security': return <Globe className="w-3.5 h-3.5 text-emerald-400" />;
-      case 'Integrations': return <Key className="w-3.5 h-3.5 text-amber-400" />;
-      case 'Team': return <Users className="w-3.5 h-3.5 text-cyan-400" />;
-      case 'Subscribers': return <UserPlus className="w-3.5 h-3.5 text-teal-400" />;
-      case 'Billing': return <CreditCard className="w-3.5 h-3.5 text-pink-400" />;
-      default: return <ClipboardList className="w-3.5 h-3.5 text-slate-400" />;
+      case 'Campaigns': return <Send className="w-3.5 h-3.5 text-slate-950" />;
+      case 'Automations': return <Workflow className="w-3.5 h-3.5 text-slate-950" />;
+      case 'Security': return <Globe className="w-3.5 h-3.5 text-slate-950" />;
+      case 'Integrations': return <Key className="w-3.5 h-3.5 text-slate-950" />;
+      case 'Team': return <UserPlus className="w-3.5 h-3.5 text-slate-950" />;
+      case 'Subscribers': return <UserPlus className="w-3.5 h-3.5 text-slate-950" />;
+      case 'Billing': return <CreditCard className="w-3.5 h-3.5 text-slate-950" />;
+      default: return <ClipboardList className="w-3.5 h-3.5 text-slate-950" />;
     }
   };
 
@@ -76,25 +76,25 @@ export default function AuditLog() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-extrabold font-heading text-slate-100 tracking-tight flex items-center gap-2.5">
-            <ClipboardList className="w-6 h-6 text-emerald-400" />
+          <h1 className="text-2xl font-bold font-heading text-slate-950 tracking-tight flex items-center gap-2.5">
+            <ClipboardList className="w-6 h-6 text-slate-950" />
             Audit & Security Log
           </h1>
-          <p className="text-xs text-slate-400 mt-1">
+          <p className="text-xs text-slate-500 mt-1">
             Immutable system event trailing for security compliance, user actions, and workspace modifications.
           </p>
         </div>
 
         <div className="flex items-center space-x-2">
-          <Button variant="outline" size="sm" onClick={loadLogs} className="gap-1.5">
+          <Button variant="outline" size="sm" onClick={loadLogs} className="gap-1.5 border-slate-300 bg-white text-slate-900 hover:bg-slate-100">
             <RefreshCw className="w-3.5 h-3.5" />
             Refresh
           </Button>
-          <Button variant="outline" size="sm" onClick={handleExportCSV} className="gap-1.5">
+          <Button variant="outline" size="sm" onClick={handleExportCSV} className="gap-1.5 border-slate-300 bg-white text-slate-900 hover:bg-slate-100">
             <Download className="w-3.5 h-3.5" />
             Export CSV
           </Button>
-          <Button variant="ghost" size="sm" onClick={handleClear} className="text-red-400 hover:text-red-300 hover:bg-red-500/10 gap-1.5">
+          <Button variant="ghost" size="sm" onClick={handleClear} className="text-rose-600 hover:text-rose-700 hover:bg-rose-50 gap-1.5">
             <Trash2 className="w-3.5 h-3.5" />
             Clear
           </Button>
@@ -102,7 +102,7 @@ export default function AuditLog() {
       </div>
 
       {/* Filters & Search */}
-      <Card className="p-4 space-y-4">
+      <Card className="p-4 space-y-4 bg-white border-slate-200">
         <div className="flex flex-col md:flex-row gap-3 items-stretch md:items-center justify-between">
           <div className="relative flex-1">
             <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
@@ -111,7 +111,7 @@ export default function AuditLog() {
               placeholder="Search by action, user, or details..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full bg-slate-950 border border-slate-800 rounded-lg pl-9 pr-4 py-2 text-xs text-slate-200 focus:outline-none focus:border-emerald-500 transition-colors"
+              className="w-full bg-white border border-slate-200 rounded-lg pl-9 pr-4 py-2 text-xs text-slate-950 focus:outline-none focus:border-black shadow-sm"
             />
           </div>
 
@@ -120,7 +120,7 @@ export default function AuditLog() {
             <select
               value={selectedStatus}
               onChange={(e) => setSelectedStatus(e.target.value)}
-              className="bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-emerald-500"
+              className="bg-white border border-slate-200 rounded-lg px-3 py-2 text-xs text-slate-950 focus:outline-none focus:border-black shadow-sm"
             >
               <option value="All">All Statuses</option>
               <option value="success">Success</option>
@@ -138,8 +138,8 @@ export default function AuditLog() {
               onClick={() => setSelectedCategory(cat)}
               className={`text-[11px] px-3 py-1 rounded-full font-medium transition-colors shrink-0 ${
                 selectedCategory === cat
-                  ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
-                  : 'bg-slate-900/60 text-slate-400 border border-slate-800 hover:text-slate-200'
+                  ? 'bg-black text-white border border-black shadow-sm'
+                  : 'bg-white text-slate-700 border border-slate-200 hover:bg-slate-100'
               }`}
             >
               {cat}
@@ -149,11 +149,11 @@ export default function AuditLog() {
       </Card>
 
       {/* Audit Log Table */}
-      <Card className="overflow-hidden">
+      <Card className="overflow-hidden bg-white border-slate-200">
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="border-b border-slate-800 bg-slate-900/50 text-[11px] font-semibold text-slate-400 uppercase tracking-wider">
+              <tr className="border-b border-slate-200 bg-slate-50 text-[11px] font-bold text-slate-500 uppercase tracking-wider">
                 <th className="py-3 px-4">Timestamp</th>
                 <th className="py-3 px-4">Event Category</th>
                 <th className="py-3 px-4">Action</th>
@@ -162,39 +162,44 @@ export default function AuditLog() {
                 <th className="py-3 px-4 text-right">Status</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-800/60 text-xs">
+            <tbody className="divide-y divide-slate-100 text-xs">
               {filteredLogs.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="py-12 text-center text-slate-500">
-                    <ClipboardList className="w-8 h-8 mx-auto mb-2 opacity-40" />
+                  <td colSpan={6} className="py-12 text-center text-slate-400">
+                    <ClipboardList className="w-8 h-8 mx-auto mb-2 opacity-40 text-slate-400" />
                     No audit logs match your filter criteria.
                   </td>
                 </tr>
               ) : (
                 filteredLogs.map(log => (
-                  <tr key={log.id} className="hover:bg-slate-900/40 transition-colors">
-                    <td className="py-3 px-4 text-slate-400 font-mono text-[11px] whitespace-nowrap">
+                  <tr key={log.id} className="hover:bg-slate-50 transition-colors">
+                    <td className="py-3 px-4 text-slate-500 font-mono text-xs whitespace-nowrap">
                       {new Date(log.timestamp).toLocaleString()}
                     </td>
                     <td className="py-3 px-4 whitespace-nowrap">
                       <div className="flex items-center space-x-1.5">
                         {getCategoryIcon(log.category)}
-                        <span className="text-slate-300 font-medium">{log.category}</span>
+                        <span className="text-slate-900 font-semibold">{log.category}</span>
                       </div>
                     </td>
-                    <td className="py-3 px-4 whitespace-nowrap font-mono text-[11px] text-emerald-400 font-semibold">
+                    <td className="py-3 px-4 whitespace-nowrap font-mono text-xs text-slate-950 font-bold">
                       {log.action}
                     </td>
-                    <td className="py-3 px-4 text-slate-200 font-medium whitespace-nowrap">
+                    <td className="py-3 px-4 text-slate-900 font-medium whitespace-nowrap">
                       {log.actor}
                     </td>
-                    <td className="py-3 px-4 text-slate-300 max-w-md truncate">
+                    <td className="py-3 px-4 text-slate-700 max-w-md truncate">
                       {log.details}
                     </td>
                     <td className="py-3 px-4 text-right whitespace-nowrap">
                       <Badge
-                        variant={log.status === 'success' ? 'success' : log.status === 'warning' ? 'warning' : 'danger'}
-                        className="text-[10px] capitalize px-2 py-0.5 inline-flex items-center gap-1"
+                        className={`text-[10px] capitalize px-2 py-0.5 inline-flex items-center gap-1 font-semibold ${
+                          log.status === 'success'
+                            ? 'bg-emerald-50 text-emerald-800 border-emerald-200'
+                            : log.status === 'warning'
+                            ? 'bg-amber-50 text-amber-800 border-amber-200'
+                            : 'bg-rose-50 text-rose-800 border-rose-200'
+                        }`}
                       >
                         {log.status === 'success' ? <CheckCircle2 className="w-3 h-3" /> : <AlertTriangle className="w-3 h-3" />}
                         {log.status}

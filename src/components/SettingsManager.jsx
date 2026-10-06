@@ -12,9 +12,9 @@ export default function SettingsManager() {
   const [senderName, setSenderName] = useState(activeClient?.senderName || '');
   const [senderEmail, setSenderEmail] = useState(activeClient?.senderEmail || '');
   const [replyTo, setReplyTo] = useState(activeClient?.replyTo || '');
-  const [smtpUser, setSmtpUser] = useState('PRAFUL101NAYAK@GMAIL.COM');
-  const [smtpHost, setSmtpHost] = useState('smtp.gmail.com');
-  const [smtpPort, setSmtpPort] = useState('587');
+  const [smtpUser] = useState('PRAFUL101NAYAK@GMAIL.COM');
+  const [smtpHost] = useState('smtp.gmail.com');
+  const [smtpPort] = useState('587');
 
   const [saved, setSaved] = useState(false);
 
@@ -30,18 +30,18 @@ export default function SettingsManager() {
     <div className="space-y-6 max-w-4xl mx-auto">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold font-heading text-slate-100 flex items-center gap-2">
-          <Settings className="w-6 h-6 text-emerald-400" />
+        <h1 className="text-2xl font-bold font-heading text-slate-950 flex items-center gap-2">
+          <Settings className="w-6 h-6 text-slate-950" />
           <span>Workspace & Domain Settings</span>
         </h1>
-        <p className="text-xs text-slate-400 mt-1">
-          Configure DNS domain authentication (SPF, DKIM, DMARC), sender identity, and delivery preferences for <strong className="text-slate-200">{activeClient?.name}</strong>.
+        <p className="text-xs text-slate-500 mt-1">
+          Configure DNS domain authentication (SPF, DKIM, DMARC), sender identity, and delivery preferences for <strong className="text-slate-900">{activeClient?.name}</strong>.
         </p>
       </div>
 
       {saved && (
-        <Card className="p-4 border-emerald-500/30 bg-emerald-950/30 text-emerald-300 flex items-center gap-3">
-          <CheckCircle2 className="w-5 h-5 text-emerald-400" />
+        <Card className="p-4 border-emerald-200 bg-emerald-50 text-emerald-900 flex items-center gap-3">
+          <CheckCircle2 className="w-5 h-5 text-emerald-700" />
           <span className="text-xs font-semibold">Settings updated successfully for this workspace!</span>
         </Card>
       )}
@@ -52,84 +52,87 @@ export default function SettingsManager() {
       <form onSubmit={handleSaveSettings} className="space-y-6">
         
         {/* Sender Identity Section */}
-        <Card>
+        <Card className="bg-white border-slate-200">
           <CardHeader>
-            <CardTitle className="text-base flex items-center gap-2">
-              <Mail className="w-4 h-4 text-emerald-400" />
+            <CardTitle className="text-base flex items-center gap-2 text-slate-950 font-bold">
+              <Mail className="w-4 h-4 text-slate-950" />
               <span>Sender Identity & Headers</span>
             </CardTitle>
-            <CardDescription>
+            <CardDescription className="text-slate-500 text-xs">
               Specify default email sender headers displayed to your campaign recipients.
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-1.5">
-                <label className="text-xs font-medium text-slate-300">Default Sender Name</label>
+                <label className="text-xs font-bold text-slate-700">Default Sender Name</label>
                 <Input
                   type="text"
                   placeholder="e.g. Acme Marketing Team"
                   value={senderName}
                   onChange={(e) => setSenderName(e.target.value)}
+                  className="bg-white border-slate-200 text-slate-950 focus:border-black"
                 />
               </div>
               <div className="space-y-1.5">
-                <label className="text-xs font-medium text-slate-300">Default Sender Email *</label>
+                <label className="text-xs font-bold text-slate-700">Default Sender Email *</label>
                 <Input
                   type="email"
                   placeholder="newsletter@acmemarketing.com"
                   value={senderEmail}
                   onChange={(e) => setSenderEmail(e.target.value)}
                   required
+                  className="bg-white border-slate-200 text-slate-950 focus:border-black"
                 />
               </div>
             </div>
             <div className="space-y-1.5">
-              <label className="text-xs font-medium text-slate-300">Reply-To Email Address</label>
+              <label className="text-xs font-bold text-slate-700">Reply-To Email Address</label>
               <Input
                 type="email"
                 placeholder="support@acmemarketing.com"
                 value={replyTo}
                 onChange={(e) => setReplyTo(e.target.value)}
+                className="bg-white border-slate-200 text-slate-950 focus:border-black"
               />
             </div>
           </CardContent>
         </Card>
 
         {/* Email Engine Delivery Status Section */}
-        <Card>
+        <Card className="bg-white border-slate-200">
           <CardHeader>
-            <CardTitle className="text-base flex items-center gap-2">
-              <Server className="w-4 h-4 text-emerald-400" />
+            <CardTitle className="text-base flex items-center gap-2 text-slate-950 font-bold">
+              <Server className="w-4 h-4 text-slate-950" />
               <span>Email Engine Dispatcher Status</span>
             </CardTitle>
-            <CardDescription>
+            <CardDescription className="text-slate-500 text-xs">
               Current email engine delivery configuration active on your backend server.
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
-              <div className="p-3 bg-slate-950/80 rounded-lg border border-slate-800 space-y-1">
-                <span className="text-slate-400 block text-[11px]">Active Engine Provider</span>
-                <span className="font-semibold text-emerald-400">Google SMTP Server</span>
+              <div className="p-3 bg-slate-50 rounded-lg border border-slate-200 space-y-1">
+                <span className="text-slate-500 block text-[11px] font-medium">Active Engine Provider</span>
+                <span className="font-bold text-slate-950">Google SMTP Server</span>
               </div>
-              <div className="p-3 bg-slate-950/80 rounded-lg border border-slate-800 space-y-1">
-                <span className="text-slate-400 block text-[11px]">SMTP Gateway</span>
-                <span className="font-mono text-slate-200">{smtpHost}:{smtpPort}</span>
+              <div className="p-3 bg-slate-50 rounded-lg border border-slate-200 space-y-1">
+                <span className="text-slate-500 block text-[11px] font-medium">SMTP Gateway</span>
+                <span className="font-mono font-bold text-slate-950">{smtpHost}:{smtpPort}</span>
               </div>
-              <div className="p-3 bg-slate-950/80 rounded-lg border border-slate-800 space-y-1">
-                <span className="text-slate-400 block text-[11px]">Authenticated Account</span>
-                <span className="font-mono text-slate-200 truncate block">{smtpUser}</span>
+              <div className="p-3 bg-slate-50 rounded-lg border border-slate-200 space-y-1">
+                <span className="text-slate-500 block text-[11px] font-medium">Authenticated Account</span>
+                <span className="font-mono font-semibold text-slate-950 truncate block">{smtpUser}</span>
               </div>
             </div>
 
-            <div className="p-3 bg-emerald-500/10 border border-emerald-500/20 rounded-lg text-xs text-emerald-300 flex items-center gap-2">
-              <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0" />
+            <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-lg text-xs text-emerald-900 flex items-center gap-2 font-medium">
+              <ShieldCheck className="w-4 h-4 text-emerald-700 shrink-0" />
               <span>Active SMTP delivery engine authenticated and ready to dispatch emails.</span>
             </div>
           </CardContent>
           <CardFooter className="flex justify-end">
-            <Button type="submit">Save Settings</Button>
+            <Button type="submit" className="bg-black text-white hover:bg-slate-800">Save Settings</Button>
           </CardFooter>
         </Card>
 

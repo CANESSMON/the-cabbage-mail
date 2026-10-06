@@ -69,29 +69,29 @@ export const generateTopCampaigns = (count = 5) => {
 
 // Device/client breakdown
 export const generateDeviceBreakdown = () => [
-  { device: 'Desktop', percentage: rand(35, 55), color: 'bg-emerald-500' },
-  { device: 'Mobile', percentage: rand(30, 45), color: 'bg-teal-500' },
-  { device: 'Tablet', percentage: rand(5, 15), color: 'bg-indigo-500' },
-  { device: 'Other', percentage: rand(2, 8), color: 'bg-slate-500' },
+  { device: 'Desktop', percentage: rand(35, 55), color: 'bg-black' },
+  { device: 'Mobile', percentage: rand(30, 45), color: 'bg-slate-700' },
+  { device: 'Tablet', percentage: rand(5, 15), color: 'bg-slate-500' },
+  { device: 'Other', percentage: rand(2, 8), color: 'bg-slate-300' },
 ];
 
 // Geographic data
 export const generateGeoData = () => [
-  { country: 'United States', count: rand(200, 800), flag: '🇺🇸' },
-  { country: 'United Kingdom', count: rand(50, 200), flag: '🇬🇧' },
-  { country: 'India', count: rand(80, 300), flag: '🇮🇳' },
-  { country: 'Germany', count: rand(30, 150), flag: '🇩🇪' },
-  { country: 'Canada', count: rand(40, 180), flag: '🇨🇦' },
-  { country: 'Australia', count: rand(20, 100), flag: '🇦🇺' },
-  { country: 'France', count: rand(25, 120), flag: '🇫🇷' },
-  { country: 'Brazil', count: rand(15, 90), flag: '🇧🇷' },
+  { country: 'United States', count: rand(200, 800), code: 'US' },
+  { country: 'United Kingdom', count: rand(50, 200), code: 'GB' },
+  { country: 'India', count: rand(80, 300), code: 'IN' },
+  { country: 'Germany', count: rand(30, 150), code: 'DE' },
+  { country: 'Canada', count: rand(40, 180), code: 'CA' },
+  { country: 'Australia', count: rand(20, 100), code: 'AU' },
+  { country: 'France', count: rand(25, 120), code: 'FR' },
+  { country: 'Brazil', count: rand(15, 90), code: 'BR' },
 ].sort((a, b) => b.count - a.count);
 
 // Email client breakdown
 export const generateEmailClients = () => [
-  { client: 'Gmail', percentage: rand(35, 50), color: 'bg-red-500' },
-  { client: 'Apple Mail', percentage: rand(15, 30), color: 'bg-slate-400' },
-  { client: 'Outlook', percentage: rand(10, 20), color: 'bg-blue-500' },
-  { client: 'Yahoo Mail', percentage: rand(5, 10), color: 'bg-purple-500' },
-  { client: 'Other', percentage: rand(3, 10), color: 'bg-slate-600' },
+  { client: 'Gmail', percentage: rand(35, 50), color: 'bg-black' },
+  { client: 'Apple Mail', percentage: rand(15, 30), color: 'bg-slate-700' },
+  { client: 'Outlook', percentage: rand(10, 20), color: 'bg-slate-500' },
+  { client: 'Yahoo Mail', percentage: rand(5, 10), color: 'bg-slate-400' },
+  { client: 'Other', percentage: rand(3, 10), color: 'bg-slate-300' },
 ];
