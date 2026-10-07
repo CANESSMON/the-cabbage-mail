@@ -76,7 +76,7 @@ export const sendCampaign = async (req: AuthenticatedRequest, res: Response) => 
       region: workspace.awsRegion
     } : undefined;
 
-    const fromEmail = workspace?.defaultSenderEmail || env.SES_FROM_EMAIL || env.SMTP_FROM;
+    const fromEmail = workspace?.defaultSenderEmail || env.SES_FROM_EMAIL || 'info@emailbhejo.com';
 
     // Fetch active subscribers for this workspace
     const subscribers = await prisma.subscriber.findMany({
@@ -117,7 +117,7 @@ export const sendCampaign = async (req: AuthenticatedRequest, res: Response) => 
       }
     } else {
       // Fallback preview dispatch if workspace has no subscribers yet
-      const defaultTo = env.SMTP_TO || 'info@emailbhejo.com';
+      const defaultTo = 'info@emailbhejo.com';
       const result = await sendEmail({
         to: defaultTo,
         from: fromEmail,

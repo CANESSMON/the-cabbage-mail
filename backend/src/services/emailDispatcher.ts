@@ -1,4 +1,3 @@
-import nodemailer from 'nodemailer';
 import { SESv2Client, SendEmailCommand } from '@aws-sdk/client-sesv2';
 import { env } from '../config/env.js';
 
@@ -17,30 +16,16 @@ export interface EmailDispatchOptions {
 
 export interface EmailDispatchResult {
   success: boolean;
-  provider: 'AWS' | 'SMTP' | 'MOCK';
+  provider: 'AWS' | 'MOCK';
   messageId?: string;
   details?: any;
 }
 
-// 1. Universal SMTP Transporter (Gmail / Custom SMTP)
-const getSmtpTransporter = () => {
-  const isSecure = env.SMTP_SECURE === 'true' || env.SMTP_PORT === '465';
-  return nodemailer.createTransport({
-    host: env.SMTP_HOST,
-    port: parseInt(env.SMTP_PORT, 10),
-    secure: isSecure,
-    auth: env.SMTP_USER && env.SMTP_PASS ? {
-      user: env.SMTP_USER,
-      pass: env.SMTP_PASS
-    } : undefined
-  });
-};
-
-// 2. AWS SESv2 Client
+// AWS SESv2 Client Instance
 const getAwsSesClient = (customCredentials?: EmailDispatchOptions['credentials']) => {
   const accessKeyId = customCredentials?.accessKeyId || env.AWS_ACCESS_KEY_ID;
   const secretAccessKey = customCredentials?.secretAccessKey || env.AWS_SECRET_ACCESS_KEY;
-  const region = customCredentials?.region || env.AWS_REGION || 'ap-south-1';
+  const region = customCredentials?.region || env.AWS_REGION || 'eu-north-1';
 
   return new SESv2Client({
     region,
@@ -52,47 +37,14 @@ const getAwsSesClient = (customCredentials?: EmailDispatchOptions['credentials']
 };
 
 /**
- * Universal Email Dispatcher
- * Switches dynamically between AWS (SES), SMTP (Gmail), and MOCK providers based on process.env.EMAIL_PROVIDER
+ * Enterprise AWS SES Email Dispatcher
+ * Dispatches live marketing campaigns via AWS SES Cloud infrastructure (or MOCK mode)
  */
 export const sendEmail = async (options: EmailDispatchOptions): Promise<EmailDispatchResult> => {
   const provider = env.EMAIL_PROVIDER;
-  const fromEmail = options.from || env.SES_FROM_EMAIL || env.SMTP_FROM || 'info@emailbhejo.com';
+  const fromEmail = options.from || env.SES_FROM_EMAIL || 'info@emailbhejo.com';
 
   console.log(`🚀 [EmailDispatcher] Dispatching via provider: ${provider} to ${options.to}`);
-
-  if (provider === 'SMTP') {
-    try {
-      const transporter = getSmtpTransporter();
-      const headers: Record<string, string> = {};
-      if (options.unsubscribeUrl) {
-        headers['List-Unsubscribe'] = `<${options.unsubscribeUrl}>`;
-        headers['List-Unsubscribe-Post'] = 'List-Unsubscribe=One-Click';
-      }
-
-      const info = await transporter.sendMail({
-        from: fromEmail,
-        to: options.to,
-        subject: options.subject,
-        html: options.html,
-        headers
-      });
-      console.log(`✅ [SMTP Dispatch Success] MessageId: ${info.messageId}`);
-      return {
-        success: true,
-        provider: 'SMTP',
-        messageId: info.messageId,
-        details: info
-      };
-    } catch (err: any) {
-      console.error(`❌ [SMTP Dispatch Failed]:`, err.message);
-      return {
-        success: false,
-        provider: 'SMTP',
-        details: err.message
-      };
-    }
-  }
 
   if (provider === 'AWS') {
     try {

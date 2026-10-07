@@ -12,9 +12,6 @@ export default function SettingsManager() {
   const [senderName, setSenderName] = useState(activeClient?.senderName || '');
   const [senderEmail, setSenderEmail] = useState(activeClient?.senderEmail || '');
   const [replyTo, setReplyTo] = useState(activeClient?.replyTo || '');
-  const [smtpUser] = useState('PRAFUL101NAYAK@GMAIL.COM');
-  const [smtpHost] = useState('smtp.gmail.com');
-  const [smtpPort] = useState('587');
 
   const [saved, setSaved] = useState(false);
 
@@ -107,28 +104,28 @@ export default function SettingsManager() {
               <span>Email Engine Dispatcher Status</span>
             </CardTitle>
             <CardDescription className="text-slate-500 text-xs">
-              Current email engine delivery configuration active on your backend server.
+              Current email engine delivery configuration active on your AWS cloud infrastructure.
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
               <div className="p-3 bg-slate-50 rounded-lg border border-slate-200 space-y-1">
                 <span className="text-slate-500 block text-[11px] font-medium">Active Engine Provider</span>
-                <span className="font-bold text-slate-950">Google SMTP Server</span>
+                <span className="font-bold text-slate-950">Amazon SES (Simple Email Service)</span>
               </div>
               <div className="p-3 bg-slate-50 rounded-lg border border-slate-200 space-y-1">
-                <span className="text-slate-500 block text-[11px] font-medium">SMTP Gateway</span>
-                <span className="font-mono font-bold text-slate-950">{smtpHost}:{smtpPort}</span>
+                <span className="text-slate-500 block text-[11px] font-medium">AWS Cloud Region</span>
+                <span className="font-mono font-bold text-slate-950">eu-north-1 (Stockholm)</span>
               </div>
               <div className="p-3 bg-slate-50 rounded-lg border border-slate-200 space-y-1">
-                <span className="text-slate-500 block text-[11px] font-medium">Authenticated Account</span>
-                <span className="font-mono font-semibold text-slate-950 truncate block">{smtpUser}</span>
+                <span className="text-slate-500 block text-[11px] font-medium">Authenticated Identity</span>
+                <span className="font-mono font-semibold text-slate-950 truncate block">info@emailbhejo.com</span>
               </div>
             </div>
 
             <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-lg text-xs text-emerald-900 flex items-center gap-2 font-medium">
               <ShieldCheck className="w-4 h-4 text-emerald-700 shrink-0" />
-              <span>Active SMTP delivery engine authenticated and ready to dispatch emails.</span>
+              <span>AWS SES Cloud Dispatcher active and authenticated with verified identity info@emailbhejo.com.</span>
             </div>
           </CardContent>
           <CardFooter className="flex justify-end">
