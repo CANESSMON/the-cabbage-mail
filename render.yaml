@@ -1,0 +1,34 @@
+services:
+  # The PostgreSQL Database
+  - type: pgo
+    name: emailbhejo-db
+    plan: free
+
+  # The Backend Node.js API
+  - type: web
+    name: emailbhejo-backend
+    env: node
+    plan: free
+    rootDir: backend
+    buildCommand: npm install && npm run build && npx prisma generate && npx prisma db push
+    startCommand: npm start
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: emailbhejo-db
+          property: connectionString
+      - key: JWT_SECRET
+        generateValue: true
+
+  # The Frontend React Application
+  - type: web
+    name: emailbhejo-frontend
+    env: static
+    buildCommand: npm install && npm run build
+    publishPath: dist
+    envVars:
+      - key: VITE_API_URL
+        fromService:
+          type: web
+          name: emailbhejo-backend
+          envVarKey: RENDER_EXTERNAL_URL
