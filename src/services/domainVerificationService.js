@@ -60,6 +60,16 @@ export const generateDomainDnsRecords = (domain = 'yourcompany.com', isVerified 
  * Execute actual DNS audit via backend API or live DNS query.
  * Will FAIL and stay PENDING if records are not found in public DNS.
  */
+// Helper to resolve API base URL safely
+const getApiBase = () => {
+  let url = import.meta.env.VITE_API_URL || 'http://localhost:4000';
+  url = url.replace(/\/+$/, '');
+  if (url.endsWith('/api/v1')) {
+    url = url.substring(0, url.length - 7);
+  }
+  return url;
+};
+
 // Helper to generate Authorization header from saved JWT or dev fallback
 const getAuthHeaders = () => {
   const token = localStorage.getItem('emailbhejo_auth_token') || 'dev_token_123';
@@ -74,10 +84,21 @@ const getAuthHeaders = () => {
  * Will check public DNS for SPF, DKIM, DMARC, and challenge TXT.
  */
 export const verifyDomainDnsStatus = async (domain) => {
-  const cleanDomain = domain.replace(/^https?:\/\//, '').replace(/\/.*$/, '').toLowerCase();
+  const cleanDomain = domain ? domain.replace(/^https?:\/\//, '').replace(/\/.*$/, '').trim().toLowerCase() : 'yourcompany.com';
+
+  if (!cleanDomain || cleanDomain === 'yourcompany.com' || cleanDomain === 'acme.com' || cleanDomain === 'acmemarketing.com') {
+    return {
+      domain: cleanDomain,
+      overallStatus: 'PENDING',
+      isVerified: false,
+      message: 'Please enter your actual domain name (e.g., auqanix.com) in Default Sender Email settings to verify DNS records.',
+      records: generateDomainDnsRecords(cleanDomain, false),
+      deliverabilityScore: 20,
+    };
+  }
 
   try {
-    const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:4000';
+    const API_BASE = getApiBase();
     const response = await fetch(`${API_BASE}/api/v1/domains/verify-dns`, {
       method: 'POST',
       headers: getAuthHeaders(),
@@ -100,28 +121,35 @@ export const verifyDomainDnsStatus = async (domain) => {
         overallStatus: isVerified ? 'VERIFIED' : 'PENDING',
         isVerified,
         message: isVerified
-          ? 'DNS records verified successfully on public DNS.'
-          : 'DNS audit complete: Some or all TXT/CNAME records are pending propagation in public DNS.',
+          ? `DNS records for ${cleanDomain} verified successfully on public DNS!`
+          : `DNS audit complete for ${cleanDomain}: Some or all TXT/CNAME records are pending propagation in public DNS.`,
         records,
         deliverabilityScore: isVerified ? 98 : 35,
       };
     } else {
       const errData = await response.json().catch(() => ({}));
-      console.warn('Backend API note:', errData.error || response.statusText);
+      const errMsg = errData.error || errData.details || `API Error (${response.status}): ${response.statusText}`;
+      console.warn('Backend API note:', errMsg);
+      return {
+        domain: cleanDomain,
+        overallStatus: 'PENDING',
+        isVerified: false,
+        message: `Verification Check Failed (${response.status}): ${errMsg}`,
+        records: generateDomainDnsRecords(cleanDomain, false),
+        deliverabilityScore: 20,
+      };
     }
   } catch (e) {
-    console.warn('Backend DNS API unreachable, falling back to local client validation check.');
+    console.warn('Backend DNS API unreachable:', e.message);
+    return {
+      domain: cleanDomain,
+      overallStatus: 'PENDING',
+      isVerified: false,
+      message: `Network Error: Could not connect to API server (${e.message}). Ensure backend server is online.`,
+      records: generateDomainDnsRecords(cleanDomain, false),
+      deliverabilityScore: 20,
+    };
   }
-
-  // Fallback if backend API is unreachable or records are not found in public DNS
-  return {
-    domain: cleanDomain,
-    overallStatus: 'PENDING',
-    isVerified: false,
-    message: `DNS audit executed: Records for ${cleanDomain} were not found in public DNS tables yet. Please add the records to your DNS provider or click Automated Cloudflare Setup.`,
-    records: generateDomainDnsRecords(cleanDomain, false),
-    deliverabilityScore: 20,
-  };
 };
 
 /**
@@ -146,7 +174,7 @@ export const autoProvisionCloudflareDns = async (domain, apiToken) => {
   const cleanDomain = domain.replace(/^https?:\/\//, '').replace(/\/.*$/, '').toLowerCase();
 
   try {
-    const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:4000';
+    const API_BASE = getApiBase();
     const response = await fetch(`${API_BASE}/api/v1/domains/auto-provision-dns`, {
       method: 'POST',
       headers: getAuthHeaders(),

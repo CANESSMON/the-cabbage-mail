@@ -21,7 +21,7 @@ export default function SettingsManager() {
     setTimeout(() => setSaved(false), 2000);
   };
 
-  const domainName = (senderEmail.split('@')[1]) || 'yourcompany.com';
+  const domainName = (senderEmail.split('@')[1]) || activeClient?.domain || 'auqanix.com';
 
   return (
     <div className="space-y-6 max-w-4xl mx-auto">
