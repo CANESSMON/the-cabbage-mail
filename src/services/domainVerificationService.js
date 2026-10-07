@@ -146,7 +146,8 @@ export const autoProvisionCloudflareDns = async (domain, apiToken) => {
   const cleanDomain = domain.replace(/^https?:\/\//, '').replace(/\/.*$/, '').toLowerCase();
 
   try {
-    const response = await fetch('http://localhost:4000/api/v1/domains/auto-provision-dns', {
+    const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:4000';
+    const response = await fetch(`${API_BASE}/api/v1/domains/auto-provision-dns`, {
       method: 'POST',
       headers: getAuthHeaders(),
       body: JSON.stringify({ domainName: cleanDomain, apiToken })
