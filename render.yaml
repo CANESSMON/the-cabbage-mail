@@ -1,8 +1,8 @@
-services:
-  # The PostgreSQL Database
-  - type: pgo
-    name: emailbhejo-db
+databases:
+  - name: emailbhejo-db
     plan: free
+
+services:
 
   # The Backend Node.js API
   - type: web
