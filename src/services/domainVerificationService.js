@@ -77,7 +77,8 @@ export const verifyDomainDnsStatus = async (domain) => {
   const cleanDomain = domain.replace(/^https?:\/\//, '').replace(/\/.*$/, '').toLowerCase();
 
   try {
-    const response = await fetch('http://localhost:4000/api/v1/domains/verify-dns', {
+    const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:4000';
+    const response = await fetch(`${API_BASE}/api/v1/domains/verify-dns`, {
       method: 'POST',
       headers: getAuthHeaders(),
       body: JSON.stringify({ domainName: cleanDomain })
