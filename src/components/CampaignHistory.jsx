@@ -32,7 +32,7 @@ export default function CampaignHistory({ setActiveTab }) {
   const [expandedCampaign, setExpandedCampaign] = useState(null);
 
   const allCampaigns = campaigns.length > 0 ? campaigns : [
-    { id: 'demo-1', subject: 'Welcome to The Cabbage Mail', senderEmail: 'hello@example.com', status: 'SENT', sentCount: 245, sentAt: new Date().toISOString(), awsMessageId: 'msg_abc123def456', recipients: [] },
+    { id: 'demo-1', subject: 'Welcome to EmailBhejo', senderEmail: 'hello@example.com', status: 'SENT', sentCount: 245, sentAt: new Date().toISOString(), awsMessageId: 'msg_abc123def456', recipients: [] },
     { id: 'demo-2', subject: 'September Newsletter', senderEmail: 'news@example.com', status: 'SENT', sentCount: 189, sentAt: new Date(Date.now() - 86400000).toISOString(), awsMessageId: 'msg_ghi789jkl012', recipients: [] },
     { id: 'demo-3', subject: 'Flash Sale — 48 Hours Only', senderEmail: 'promo@example.com', status: 'SCHEDULED', sentCount: 0, sentAt: new Date(Date.now() + 172800000).toISOString(), awsMessageId: null, recipients: [] },
   ];

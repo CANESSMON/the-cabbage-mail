@@ -3,7 +3,7 @@
  * Logs security, campaign, domain, team, api, and billing events to localStorage
  */
 
-const AUDIT_STORAGE_KEY = 'cabbage_audit_logs';
+const AUDIT_STORAGE_KEY = 'emailbhejo_audit_logs';
 
 const INITIAL_AUDIT_LOGS = [];
 
@@ -17,7 +17,7 @@ export const auditService = {
     }
   },
 
-  logEvent: (action, category, details, actor = 'Alex Rivera (alex@acme.com)', status = 'success') => {
+  logEvent: (action, category, details, actor = 'System', status = 'success') => {
     const logs = auditService.getLogs();
     const newLog = {
       id: 'evt_' + Date.now(),

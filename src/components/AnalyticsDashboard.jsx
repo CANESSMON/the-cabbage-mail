@@ -76,6 +76,7 @@ export default function AnalyticsDashboard() {
           <h1 className="text-2xl font-bold font-heading text-slate-950 flex items-center gap-2">
             <BarChart3 className="w-6 h-6 text-slate-950" />
             <span>Analytics & Insights</span>
+            <Badge variant="secondary" className="ml-2 text-[10px] bg-slate-100 text-slate-600 border border-slate-200">Sample Data</Badge>
           </h1>
           <p className="text-xs text-slate-500 mt-1">
             Campaign performance overview for the last {days} days.

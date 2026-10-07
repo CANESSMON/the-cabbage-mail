@@ -17,27 +17,27 @@ export const generateDomainDnsRecords = (domain = 'yourcompany.com', isVerified 
     isVerified,
     verificationTxt: {
       type: 'TXT',
-      name: `_cabbage-verify.${cleanDomain}`,
-      value: `cabbage-verify-domain=txt_${domainHash}9x2k81`,
+      name: `_emailbhejo-verify.${cleanDomain}`,
+      value: `emailbhejo-verify-domain=txt_${domainHash}9x2k81`,
       status: initialStatus,
     },
     dkimRecords: [
       {
         type: 'CNAME',
-        name: `cabbage1._domainkey.${cleanDomain}`,
-        value: `cabbage1.dkim.amazonses.com`,
+        name: `emailbhejo1._domainkey.${cleanDomain}`,
+        value: `emailbhejo1.dkim.amazonses.com`,
         status: initialStatus,
       },
       {
         type: 'CNAME',
-        name: `cabbage2._domainkey.${cleanDomain}`,
-        value: `cabbage2.dkim.amazonses.com`,
+        name: `emailbhejo2._domainkey.${cleanDomain}`,
+        value: `emailbhejo2.dkim.amazonses.com`,
         status: initialStatus,
       },
       {
         type: 'CNAME',
-        name: `cabbage3._domainkey.${cleanDomain}`,
-        value: `cabbage3.dkim.amazonses.com`,
+        name: `emailbhejo3._domainkey.${cleanDomain}`,
+        value: `emailbhejo3.dkim.amazonses.com`,
         status: initialStatus,
       },
     ],
@@ -62,7 +62,7 @@ export const generateDomainDnsRecords = (domain = 'yourcompany.com', isVerified 
  */
 // Helper to generate Authorization header from saved JWT or dev fallback
 const getAuthHeaders = () => {
-  const token = localStorage.getItem('cabbage_auth_token') || 'dev_token_123';
+  const token = localStorage.getItem('emailbhejo_auth_token') || 'dev_token_123';
   return {
     'Content-Type': 'application/json',
     'Authorization': `Bearer ${token}`
@@ -117,7 +117,7 @@ export const verifyDomainDnsStatus = async (domain) => {
     domain: cleanDomain,
     overallStatus: 'PENDING',
     isVerified: false,
-    message: `DNS audit executed: Records for ${cleanDomain} were not found in public DNS tables yet. Please add the records to your DNS provider or click 1-Click Cloudflare Setup.`,
+    message: `DNS audit executed: Records for ${cleanDomain} were not found in public DNS tables yet. Please add the records to your DNS provider or click Automated Cloudflare Setup.`,
     records: generateDomainDnsRecords(cleanDomain, false),
     deliverabilityScore: 20,
   };
@@ -190,4 +190,3 @@ export const autoProvisionCloudflareDns = async (domain, apiToken) => {
     };
   }
 };
-

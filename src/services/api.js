@@ -6,7 +6,7 @@
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000/api/v1';
 
 const getAuthHeaders = () => {
-  const token = localStorage.getItem('cabbage_auth_token');
+  const token = localStorage.getItem('emailbhejo_auth_token');
   return {
     'Content-Type': 'application/json',
     ...(token ? { Authorization: `Bearer ${token}` } : {})

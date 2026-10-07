@@ -108,10 +108,10 @@ export default function CampaignComposer({ setActiveTab }) {
         <div>
           <h1 className="text-2xl font-extrabold font-heading text-slate-950 tracking-tight flex items-center gap-2">
             <Send className="w-6 h-6 text-slate-900" />
-            <span>Campaign Composer & Pre-Flight Inspector</span>
+            <span>Campaign Composer</span>
           </h1>
           <p className="text-xs text-slate-600 mt-1">
-            Pre-flight deliverability check & dispatch to <strong className="text-slate-950 font-bold">{hygieneResult.validCount} contacts</strong> in <strong className="text-slate-950 font-bold">{activeClient?.name}</strong>.
+            Deliverability check & dispatch to <strong className="text-slate-950 font-bold">{hygieneResult.validCount} contacts</strong> in <strong className="text-slate-950 font-bold">{activeClient?.name}</strong>.
           </p>
         </div>
 
@@ -184,7 +184,7 @@ export default function CampaignComposer({ setActiveTab }) {
 
             {/* Merge Tag Chips */}
             <div className="flex items-center space-x-2 text-xs py-1">
-              <span className="text-slate-500 text-[11px] font-bold uppercase tracking-wider">Merge Tags:</span>
+              <span className="text-slate-500 text-[11px] font-bold uppercase tracking-wider">Personalization:</span>
               <button
                 type="button"
                 onClick={() => handleInsertTag('{{first_name}}')}
@@ -211,8 +211,8 @@ export default function CampaignComposer({ setActiveTab }) {
             {/* HTML Editor or Preview */}
             <div className="space-y-1.5">
               <label className="text-xs font-bold text-slate-900 uppercase tracking-wider flex items-center justify-between">
-                <span>{isPreview ? "Live Rendered Preview" : "HTML Email Content"}</span>
-                <span className="text-[10px] font-mono text-slate-500 lowercase">{isPreview ? "Sample Recipient: Alex Taylor" : "HTML Tags"}</span>
+                <span>{isPreview ? "Live Rendered Preview" : "Email Body"}</span>
+                <span className="text-[10px] font-mono text-slate-500 lowercase">{isPreview ? "Sample Recipient: Alex Taylor" : "Code Editor"}</span>
               </label>
 
               {isPreview ? (
@@ -238,13 +238,13 @@ export default function CampaignComposer({ setActiveTab }) {
           <Card className="bg-white border-slate-200/90 p-5 space-y-4 shadow-2xs">
             <h3 className="text-sm font-bold font-heading text-slate-950 flex items-center gap-2">
               <ShieldCheck className="w-4 h-4 text-slate-900" />
-              <span>Pre-Flight Inspection & Spam Score</span>
+              <span>Email Check</span>
             </h3>
 
             {/* Live Spam Score Indicator */}
             <div className="p-3 bg-slate-50 rounded-lg border border-slate-200 space-y-2">
               <div className="flex items-center justify-between text-xs">
-                <span className="text-slate-600 font-medium">Content Spam Risk</span>
+                <span className="text-slate-600 font-medium">Deliverability Score</span>
                 <Badge variant="outline" className="text-[10px] border-slate-300 text-slate-950 font-bold bg-white">
                   {spamAnalysis.rating}
                 </Badge>
@@ -268,7 +268,7 @@ export default function CampaignComposer({ setActiveTab }) {
 
             {/* List Hygiene Summary */}
             <div className="p-3 bg-slate-50 rounded-lg border border-slate-200 space-y-1 text-xs">
-              <span className="text-slate-500 block text-[11px] font-bold uppercase tracking-wider">List Hygiene Inspection</span>
+              <span className="text-slate-500 block text-[11px] font-bold uppercase tracking-wider">Contact List Check</span>
               <div className="flex justify-between items-center text-slate-950 pt-1">
                 <span className="font-medium">Clean Active Contacts</span>
                 <strong className="text-slate-950 font-mono font-bold">{hygieneResult.validCount}</strong>
@@ -283,7 +283,7 @@ export default function CampaignComposer({ setActiveTab }) {
 
             {/* CAN-SPAM Compliance Check */}
             <div className="p-3 bg-slate-50 rounded-lg border border-slate-200 space-y-1.5 text-xs">
-              <span className="text-slate-500 block text-[11px] font-bold uppercase tracking-wider">CAN-SPAM Legal Checklist</span>
+              <span className="text-slate-500 block text-[11px] font-bold uppercase tracking-wider">Compliance Check</span>
               <div className="flex items-center gap-1.5 text-slate-900 font-medium">
                 <CheckCircle2 className="w-3.5 h-3.5 text-slate-950" />
                 <span>Verified Sender Address</span>

@@ -6,10 +6,12 @@ import {
   Key, Plus, Copy, Check, Trash2, Terminal, CheckCircle2, Shield
 } from 'lucide-react';
 import { auditService } from '../services/auditService';
+import { useAuth } from '../context/AuthContext';
 
 const INITIAL_KEYS = [];
 
 export default function ApiKeysManager() {
+  const { user } = useAuth();
   const [keys, setKeys] = useState(INITIAL_KEYS);
   const [showNewKeyModal, setShowNewKeyModal] = useState(false);
   const [newKeyName, setNewKeyName] = useState('');
@@ -39,13 +41,13 @@ export default function ApiKeysManager() {
     setCreatedSecret(rawToken);
     setNewKeyName('');
     setShowNewKeyModal(false);
-    auditService.logEvent('API_KEY_CREATED', 'Integrations', `Generated new API key "${newKeyName}" (${selectedScopes.join(', ')})`);
+    auditService.logEvent('API_KEY_CREATED', 'Integrations', `Generated new API key "${newKeyName}" (${selectedScopes.join(', ')})`, user?.name);
   };
 
   const handleRevokeKey = (id, name) => {
     if (window.confirm(`Are you sure you want to revoke API key "${name}"? This cannot be undone.`)) {
       setKeys(keys.filter(k => k.id !== id));
-      auditService.logEvent('API_KEY_REVOKED', 'Integrations', `Revoked API key "${name}"`, 'Alex Rivera', 'warning');
+      auditService.logEvent('API_KEY_REVOKED', 'Integrations', `Revoked API key "${name}"`, user?.name, 'warning');
     }
   };
 
@@ -58,10 +60,10 @@ export default function ApiKeysManager() {
   };
 
   const getCurlSnippet = () => {
-    const key = keys[0]?.prefix + '...' || 'cbm_live_...';
+    const key = keys[0]?.prefix + '...' || 'ebm_live_...';
     switch (activeSnippetTab) {
       case 'add_subscriber':
-        return `curl -X POST https://api.cabbagemail.io/v1/subscribers \\
+        return `curl -X POST https://api.emailbhejo.com/v1/subscribers \\
   -H "Authorization: Bearer ${key}" \\
   -H "Content-Type: application/json" \\
   -d '{
@@ -70,7 +72,7 @@ export default function ApiKeysManager() {
     "tags": ["web-lead", "vip"]
   }'`;
       case 'send_campaign':
-        return `curl -X POST https://api.cabbagemail.io/v1/campaigns/send \\
+        return `curl -X POST https://api.emailbhejo.com/v1/campaigns/send \\
   -H "Authorization: Bearer ${key}" \\
   -H "Content-Type: application/json" \\
   -d '{
@@ -78,7 +80,7 @@ export default function ApiKeysManager() {
     "segment_id": "seg_101"
   }'`;
       case 'get_analytics':
-        return `curl -X GET https://api.cabbagemail.io/v1/analytics/summary \\
+        return `curl -X GET https://api.emailbhejo.com/v1/analytics/summary \\
   -H "Authorization: Bearer ${key}"`;
       default:
         return '';
@@ -95,7 +97,7 @@ export default function ApiKeysManager() {
             API Keys & Integrations
           </h1>
           <p className="text-xs text-slate-500 mt-1">
-            Programmatically integrate your SaaS, CRM, or e-commerce store with The Cabbage Mail API endpoints.
+            Programmatically integrate your SaaS, CRM, or e-commerce store with the EmailBhejo REST API.
           </p>
         </div>
 

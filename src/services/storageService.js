@@ -1,10 +1,10 @@
-// Storage & State Management for The Cabbage Mail
+// Storage & State Management for EmailBhejo
 const STORAGE_KEYS = {
-  USERS: 'cabbage_mail_users',
-  ACTIVE_USER: 'cabbage_mail_active_user',
-  CLIENTS: 'cabbage_mail_clients',
-  SUBSCRIBERS: 'cabbage_mail_subscribers',
-  CAMPAIGNS: 'cabbage_mail_campaigns',
+  USERS: 'emailbhejo_users',
+  ACTIVE_USER: 'emailbhejo_active_user',
+  CLIENTS: 'emailbhejo_clients',
+  SUBSCRIBERS: 'emailbhejo_subscribers',
+  CAMPAIGNS: 'emailbhejo_campaigns',
 };
 
 // Clean Initial State (No hardcoded dummy data)
@@ -52,7 +52,7 @@ export const clearAllData = () => {
   localStorage.removeItem(STORAGE_KEYS.CLIENTS);
   localStorage.removeItem(STORAGE_KEYS.SUBSCRIBERS);
   localStorage.removeItem(STORAGE_KEYS.CAMPAIGNS);
-  localStorage.removeItem('cabbage_audit_logs');
+  localStorage.removeItem('emailbhejo_audit_logs');
   initStorage();
 };
 

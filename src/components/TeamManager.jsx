@@ -47,7 +47,7 @@ export default function TeamManager() {
     };
 
     setMembers([...members, newMember]);
-    auditService.logEvent('TEAM_INVITE_SENT', 'Team', `Invited ${inviteEmail} with role "${inviteRole}"`);
+    auditService.logEvent('TEAM_INVITE_SENT', 'Team', `Invited ${inviteEmail} with role "${inviteRole}"`, user?.name);
     setInviteEmail('');
     setShowInviteModal(false);
   };
@@ -55,13 +55,13 @@ export default function TeamManager() {
   const handleRemoveMember = (id, name, email) => {
     if (window.confirm(`Are you sure you want to remove ${name} (${email}) from workspace?`)) {
       setMembers(members.filter(m => m.id !== id));
-      auditService.logEvent('TEAM_MEMBER_REMOVED', 'Team', `Removed ${email} from workspace`, 'Alex Rivera', 'warning');
+      auditService.logEvent('TEAM_MEMBER_REMOVED', 'Team', `Removed ${email} from workspace`, user?.name, 'warning');
     }
   };
 
   const handleChangeRole = (id, newRole) => {
     setMembers(members.map(m => m.id === id ? { ...m, role: newRole } : m));
-    auditService.logEvent('ROLE_CHANGED', 'Team', `Updated team member role to ${newRole}`);
+    auditService.logEvent('ROLE_CHANGED', 'Team', `Updated team member role to ${newRole}`, user?.name);
   };
 
   return (

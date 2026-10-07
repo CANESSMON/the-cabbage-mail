@@ -61,12 +61,11 @@ export default function Dashboard({ setActiveTab }) {
               Welcome back, {user?.name?.split(' ')[0]}
             </h1>
             <p className="text-xs text-slate-600 max-w-lg leading-relaxed">
-              Active workspace: <strong className="text-slate-950 font-bold">{activeClient?.name}</strong> &mdash; dispatching via{' '}
-              <span className="font-mono text-slate-900 font-semibold">{activeClient?.awsRegion || 'us-east-1'}</span>
+              Active workspace: <strong className="text-slate-950 font-bold">{activeClient?.name}</strong>
             </p>
           </div>
           <div className="flex items-center space-x-2">
-            <Button size="sm" onClick={() => setActiveTab('composer')} className="bg-black hover:bg-slate-800 text-white gap-1.5 shadow-xs font-semibold">
+            <Button size="sm" onClick={() => setActiveTab('campaigns')} className="bg-black hover:bg-slate-800 text-white gap-1.5 shadow-xs font-semibold">
               <Send className="w-3.5 h-3.5" />
               <span>New Campaign</span>
             </Button>
@@ -169,7 +168,7 @@ export default function Dashboard({ setActiveTab }) {
               <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">Campaigns</span>
               <span className="text-xl font-bold font-heading text-slate-950">{totalCampaigns}</span>
             </div>
-            <Badge variant="outline" className="text-[9px] border-slate-300 text-slate-900 bg-slate-100">{clients.length} Workspaces</Badge>
+            <Badge variant="outline" className="text-[9px] border-slate-300 text-slate-900 bg-slate-100">Workspaces</Badge>
           </div>
           <MiniBarChart data={[2, 5, 1, 8, 3, totalCampaigns || 1, 4]} color="bg-slate-700" height={48} />
         </Card>
@@ -184,7 +183,7 @@ export default function Dashboard({ setActiveTab }) {
               <Mail className="w-4 h-4 text-slate-900" />
               <span>Recent Campaigns</span>
             </h2>
-            <Button variant="ghost" size="sm" onClick={() => setActiveTab('campaign-history')} className="text-xs text-slate-900 hover:bg-slate-100 h-7 font-semibold">
+            <Button variant="ghost" size="sm" onClick={() => setActiveTab('campaigns')} className="text-xs text-slate-900 hover:bg-slate-100 h-7 font-semibold">
               View All <ArrowUpRight className="w-3 h-3 ml-1" />
             </Button>
           </div>
@@ -193,7 +192,7 @@ export default function Dashboard({ setActiveTab }) {
             <Card className="p-8 text-center border-dashed border-slate-300 bg-white">
               <Mail className="w-8 h-8 text-slate-400 mx-auto mb-2" />
               <p className="text-xs text-slate-600 font-medium">No campaigns sent yet.</p>
-              <Button size="sm" onClick={() => setActiveTab('composer')} className="mt-3 bg-black hover:bg-slate-800 text-white gap-1.5">
+              <Button size="sm" onClick={() => setActiveTab('campaigns')} className="mt-3 bg-black hover:bg-slate-800 text-white gap-1.5">
                 <Plus className="w-3.5 h-3.5" /> Create First Campaign
               </Button>
             </Card>
@@ -246,7 +245,7 @@ export default function Dashboard({ setActiveTab }) {
             <h3 className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Quick Actions</h3>
             <div className="space-y-1.5">
               <Button variant="outline" size="sm" onClick={() => setActiveTab('subscribers')} className="w-full justify-start gap-2 text-xs border-slate-300 text-slate-900 hover:bg-slate-100 h-8 font-medium">
-                <Users className="w-3.5 h-3.5 text-slate-700" /> Import Subscribers
+                <Users className="w-3.5 h-3.5 text-slate-700" /> Import Contacts
               </Button>
               <Button variant="outline" size="sm" onClick={() => setActiveTab('templates')} className="w-full justify-start gap-2 text-xs border-slate-300 text-slate-900 hover:bg-slate-100 h-8 font-medium">
                 <Palette className="w-3.5 h-3.5 text-slate-700" /> Build Email Template

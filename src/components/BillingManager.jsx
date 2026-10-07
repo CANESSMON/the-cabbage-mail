@@ -7,6 +7,7 @@ import {
   Users, Send, Globe
 } from 'lucide-react';
 import { auditService } from '../services/auditService';
+import { useAuth } from '../context/AuthContext';
 
 const PLANS = [
   {
@@ -66,6 +67,7 @@ const INVOICES = [
 ];
 
 export default function BillingManager() {
+  const { user } = useAuth();
   const [currentPlanId, setCurrentPlanId] = useState('plan_growth');
   const [invoices] = useState(INVOICES);
   const [selectedPlanModal, setSelectedPlanModal] = useState(null);
@@ -81,7 +83,8 @@ export default function BillingManager() {
     auditService.logEvent(
       'PLAN_CHANGED',
       'Billing',
-      `Switched subscription plan to ${selectedPlanModal.name} (${selectedPlanModal.price}/mo)`
+      `Switched subscription plan to ${selectedPlanModal.name} (${selectedPlanModal.price}/mo)`,
+      user?.name
     );
     setSelectedPlanModal(null);
   };

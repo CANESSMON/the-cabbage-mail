@@ -30,8 +30,7 @@ const NAV_SECTIONS = [
     label: 'Main',
     items: [
       { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
-      { id: 'composer', label: 'Campaigns', icon: Send },
-      { id: 'campaign-history', label: 'Campaign History', icon: ClipboardList },
+      { id: 'campaigns', label: 'Campaigns', icon: Send },
       { id: 'templates', label: 'Templates', icon: Palette },
       { id: 'automation', label: 'Automation', icon: Workflow },
     ],
@@ -39,26 +38,25 @@ const NAV_SECTIONS = [
   {
     label: 'Audience',
     items: [
-      { id: 'subscribers', label: 'Subscribers', icon: Users },
-      { id: 'segments', label: 'Segments', icon: Filter },
-      { id: 'forms', label: 'Forms', icon: FileText },
+      { id: 'subscribers', label: 'Contacts', icon: Users },
+      { id: 'segments', label: 'Lists', icon: Filter },
     ],
   },
   {
     label: 'Insights',
     items: [
       { id: 'analytics', label: 'Analytics', icon: BarChart3 },
-      { id: 'audit-log', label: 'Audit Log', icon: ClipboardList },
     ],
   },
   {
     label: 'Settings',
     items: [
       { id: 'settings', label: 'Workspace', icon: Settings },
-      { id: 'domain', label: 'Domain & DNS', icon: ShieldCheck },
-      { id: 'api-keys', label: 'API Keys', icon: Key },
+      { id: 'domain', label: 'Domain & Sending', icon: ShieldCheck },
       { id: 'team', label: 'Team', icon: UsersRound },
+      { id: 'api-keys', label: 'API Keys', icon: Key },
       { id: 'billing', label: 'Billing', icon: CreditCard },
+      { id: 'audit-log', label: 'Audit Log', icon: ClipboardList },
     ],
   },
 ];
@@ -85,7 +83,7 @@ export default function Sidebar({ activeTab, setActiveTab, collapsed, setCollaps
                 EmailBhejo
               </span>
               <span className="text-[10px] text-slate-500 font-mono tracking-wider uppercase block mt-0.5">
-                Infrastructure
+                Email Marketing
               </span>
             </div>
           )}

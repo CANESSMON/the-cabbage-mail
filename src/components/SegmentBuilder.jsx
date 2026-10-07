@@ -164,7 +164,7 @@ export default function SegmentBuilder() {
             />
           </div>
           <Button size="sm" onClick={saveSegment} className="gap-1.5 text-xs bg-black text-white hover:bg-slate-800">
-            <Save className="w-3.5 h-3.5" /> Save Segment
+            <Save className="w-3.5 h-3.5" /> Save List
           </Button>
         </div>
 
@@ -221,12 +221,12 @@ export default function SegmentBuilder() {
         <div>
           <h1 className="text-2xl font-bold font-heading text-slate-950 flex items-center gap-2">
             <Filter className="w-6 h-6 text-slate-950" />
-            <span>Audience Segments</span>
+            <span>Contact Lists</span>
           </h1>
-          <p className="text-xs text-slate-500 mt-1">{segments.length} segments • Build dynamic audience filters</p>
+          <p className="text-xs text-slate-500 mt-1" title="Lists (previously Segments) allow you to filter contacts based on tags or behavior.">{segments.length} lists • Build dynamic audience filters</p>
         </div>
         <Button size="sm" onClick={createNewSegment} className="gap-1.5 shrink-0 bg-black text-white hover:bg-slate-800">
-          <Plus className="w-3.5 h-3.5" /> Create Segment
+          <Plus className="w-3.5 h-3.5" /> Create List
         </Button>
       </div>
 

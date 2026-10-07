@@ -3,7 +3,7 @@ import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '../ui/card';
 import { useAuth } from '../../context/AuthContext';
-import { UserPlus, Shield, Building, Mail, Lock, User } from 'lucide-react';
+import { UserPlus, Shield, Building, Mail, Lock, User, X } from 'lucide-react';
 
 export default function SignUpModal({ isOpen, onClose, onSwitchToSignIn }) {
   const { signUp } = useAuth();
@@ -35,8 +35,11 @@ export default function SignUpModal({ isOpen, onClose, onSwitchToSignIn }) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-      <Card className="w-full max-w-md border-slate-200 bg-white shadow-2xl relative overflow-hidden">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4" onClick={onClose}>
+      <Card className="w-full max-w-md border-slate-200 bg-white shadow-2xl relative overflow-hidden" onClick={(e) => e.stopPropagation()}>
+        <button onClick={onClose} className="absolute top-4 right-4 text-slate-400 hover:text-slate-900 transition-colors z-10">
+          <X className="w-5 h-5" />
+        </button>
         <CardHeader className="space-y-1">
           <div className="flex items-center space-x-2 text-slate-950 text-xs font-bold uppercase tracking-wider mb-1">
             <Shield className="w-4 h-4 text-slate-950" />
@@ -44,7 +47,7 @@ export default function SignUpModal({ isOpen, onClose, onSwitchToSignIn }) {
           </div>
           <CardTitle className="text-2xl font-bold font-heading text-slate-950">Create your Account</CardTitle>
           <CardDescription className="text-slate-500">
-            Start managing email marketing with AWS SNS cloud delivery.
+            Send professional email campaigns powered by AWS SES cloud delivery.
           </CardDescription>
         </CardHeader>
         <CardContent>

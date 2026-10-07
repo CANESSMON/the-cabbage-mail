@@ -53,7 +53,7 @@ export const AuthProvider = ({ children }) => {
     try {
       const apiRes = await apiService.register(fullName, email, password, orgName);
       if (apiRes && apiRes.token) {
-        localStorage.setItem('cabbage_auth_token', apiRes.token);
+        localStorage.setItem('emailbhejo_auth_token', apiRes.token);
         const apiUser = {
           id: apiRes.user.id,
           name: apiRes.user.name,
@@ -117,7 +117,7 @@ export const AuthProvider = ({ children }) => {
     setStorageItem(STORAGE_KEYS.USERS, updatedUsers);
     setStorageItem(STORAGE_KEYS.CLIENTS, updatedClients);
     setStorageItem(STORAGE_KEYS.ACTIVE_USER, newUser);
-    localStorage.setItem('cabbage_auth_token', `token_${newUser.id}_${Date.now()}`);
+    localStorage.setItem('emailbhejo_auth_token', `token_${newUser.id}_${Date.now()}`);
 
     setUser(newUser);
     setClients([newClient]);
@@ -130,7 +130,7 @@ export const AuthProvider = ({ children }) => {
     try {
       const apiRes = await apiService.login(email, password);
       if (apiRes && apiRes.token) {
-        localStorage.setItem('cabbage_auth_token', apiRes.token);
+        localStorage.setItem('emailbhejo_auth_token', apiRes.token);
         const apiUser = {
           id: apiRes.user.id,
           name: apiRes.user.name,
@@ -171,11 +171,28 @@ export const AuthProvider = ({ children }) => {
         id: 'user_demo_1',
         name: 'Alex Rivera',
         email: 'alex@acmemarketing.com',
-        orgName: 'Acme Growth Marketing'
+        orgName: 'EmailBhejo Demo'
       };
 
+      // Ensure demo user has a workspace/client
+      const allClients = getStorageItem(STORAGE_KEYS.CLIENTS, []);
+      const hasClient = allClients.some(c => c.userId === targetUser.id);
+      if (!hasClient) {
+        const demoClient = {
+          id: 'client_demo_1',
+          userId: targetUser.id,
+          name: 'EmailBhejo Demo',
+          senderName: 'Alex Rivera',
+          senderEmail: 'alex@acmemarketing.com',
+          replyTo: 'alex@acmemarketing.com',
+          awsRegion: 'eu-north-1',
+          createdAt: new Date().toISOString(),
+        };
+        setStorageItem(STORAGE_KEYS.CLIENTS, [...allClients, demoClient]);
+      }
+
       setStorageItem(STORAGE_KEYS.ACTIVE_USER, targetUser);
-      localStorage.setItem('cabbage_auth_token', `token_${targetUser.id}_${Date.now()}`);
+      localStorage.setItem('emailbhejo_auth_token', `token_${targetUser.id}_${Date.now()}`);
       setUser(targetUser);
       loadUserData(targetUser.id);
       return targetUser;
@@ -186,7 +203,7 @@ export const AuthProvider = ({ children }) => {
 
   const signOut = () => {
     localStorage.removeItem(STORAGE_KEYS.ACTIVE_USER);
-    localStorage.removeItem('cabbage_auth_token');
+    localStorage.removeItem('emailbhejo_auth_token');
     setUser(null);
     setActiveClient(null);
   };

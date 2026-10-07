@@ -80,10 +80,10 @@ export default function FormBuilder() {
   };
 
   const generateEmbedSnippet = () => {
-    return `<!-- The Cabbage Mail Embed Code -->
-<div id="cabbage-form-${activeForm.id}"></div>
+    return `<!-- EmailBhejo Embed Code -->
+<div id="emailbhejo-form-${activeForm.id}"></div>
 <script 
-  src="https://cdn.cabbagemail.io/v1/embed.js" 
+  src="https://cdn.emailbhejo.com/v1/embed.js" 
   data-form-id="${activeForm.id}"
   async>
 </script>`;

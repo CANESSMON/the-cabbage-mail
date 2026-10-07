@@ -94,41 +94,7 @@ export default function SettingsManager() {
               />
             </div>
           </CardContent>
-        </Card>
-
-        {/* Email Engine Delivery Status Section */}
-        <Card className="bg-white border-slate-200">
-          <CardHeader>
-            <CardTitle className="text-base flex items-center gap-2 text-slate-950 font-bold">
-              <Server className="w-4 h-4 text-slate-950" />
-              <span>Email Engine Dispatcher Status</span>
-            </CardTitle>
-            <CardDescription className="text-slate-500 text-xs">
-              Current email engine delivery configuration active on your AWS cloud infrastructure.
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
-              <div className="p-3 bg-slate-50 rounded-lg border border-slate-200 space-y-1">
-                <span className="text-slate-500 block text-[11px] font-medium">Active Engine Provider</span>
-                <span className="font-bold text-slate-950">Amazon SES (Simple Email Service)</span>
-              </div>
-              <div className="p-3 bg-slate-50 rounded-lg border border-slate-200 space-y-1">
-                <span className="text-slate-500 block text-[11px] font-medium">AWS Cloud Region</span>
-                <span className="font-mono font-bold text-slate-950">eu-north-1 (Stockholm)</span>
-              </div>
-              <div className="p-3 bg-slate-50 rounded-lg border border-slate-200 space-y-1">
-                <span className="text-slate-500 block text-[11px] font-medium">Authenticated Identity</span>
-                <span className="font-mono font-semibold text-slate-950 truncate block">info@emailbhejo.com</span>
-              </div>
-            </div>
-
-            <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-lg text-xs text-emerald-900 flex items-center gap-2 font-medium">
-              <ShieldCheck className="w-4 h-4 text-emerald-700 shrink-0" />
-              <span>AWS SES Cloud Dispatcher active and authenticated with verified identity info@emailbhejo.com.</span>
-            </div>
-          </CardContent>
-          <CardFooter className="flex justify-end">
+          <CardFooter className="flex justify-end pt-4">
             <Button type="submit" className="bg-black text-white hover:bg-slate-800">Save Settings</Button>
           </CardFooter>
         </Card>

@@ -12,12 +12,11 @@ import {
 
 const PAGE_TITLES = {
   dashboard: 'Dashboard',
-  composer: 'Campaign Composer',
-  'campaign-history': 'Campaign History',
+  campaigns: 'Campaigns',
   templates: 'Email Templates',
   automation: 'Automation Workflows',
-  subscribers: 'Subscribers',
-  segments: 'Audience Segments',
+  subscribers: 'Contacts',
+  segments: 'Contact Lists',
   forms: 'Signup Forms',
   analytics: 'Analytics & Insights',
   'audit-log': 'Audit Log',

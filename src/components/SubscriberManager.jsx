@@ -57,7 +57,7 @@ export default function SubscriberManager() {
       }
     });
 
-    setImportSuccess(`Successfully imported ${importedCount} subscribers!`);
+    setImportSuccess(`Successfully imported ${importedCount} contacts!`);
     setTimeout(() => {
       setImportSuccess('');
       setCsvContent('');
@@ -72,7 +72,7 @@ export default function SubscriberManager() {
         <div>
           <h1 className="text-2xl font-extrabold font-heading text-slate-950 tracking-tight flex items-center gap-2">
             <Users className="w-6 h-6 text-slate-900" />
-            <span>Subscriber Audience</span>
+            <span>Contacts</span>
           </h1>
           <p className="text-xs text-slate-600 mt-1">
             Managing audience list for client <strong className="text-slate-950 font-bold">{activeClient?.name}</strong>.
@@ -84,7 +84,7 @@ export default function SubscriberManager() {
             <Upload className="w-3.5 h-3.5 text-slate-700" /> Batch Import CSV
           </Button>
           <Button size="sm" onClick={() => setShowAddModal(true)} className="gap-1.5 bg-black hover:bg-slate-800 text-white font-semibold shadow-xs">
-            <UserPlus className="w-3.5 h-3.5" /> Add Subscriber
+            <UserPlus className="w-3.5 h-3.5" /> Add Contact
           </Button>
         </div>
       </div>
