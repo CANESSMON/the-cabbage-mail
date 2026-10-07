@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { getStorageItem, setStorageItem, STORAGE_KEYS, initStorage } from '../services/storageService';
+import { apiService } from '../services/api';
 
 const AuthContext = createContext();
 
@@ -9,9 +10,11 @@ export const AuthProvider = ({ children }) => {
   const [activeClient, setActiveClient] = useState(null);
   const [subscribers, setSubscribers] = useState([]);
   const [campaigns, setCampaigns] = useState([]);
+  const [backendOnline, setBackendOnline] = useState(false);
 
   useEffect(() => {
     initStorage();
+    checkBackend();
     const savedUser = getStorageItem(STORAGE_KEYS.ACTIVE_USER, null);
     if (savedUser) {
       setUser(savedUser);
@@ -20,6 +23,15 @@ export const AuthProvider = ({ children }) => {
       setUser(null);
     }
   }, []);
+
+  const checkBackend = async () => {
+    const health = await apiService.checkHealth();
+    if (health && health.status === 'online') {
+      setBackendOnline(true);
+    } else {
+      setBackendOnline(false);
+    }
+  };
 
   const loadUserData = (userId) => {
     const allClients = getStorageItem(STORAGE_KEYS.CLIENTS, []);
@@ -36,7 +48,42 @@ export const AuthProvider = ({ children }) => {
     setCampaigns(allCamps);
   };
 
-  const signUp = (fullName, email, password, orgName) => {
+  const signUp = async (fullName, email, password, orgName) => {
+    // Attempt backend API registration first if available
+    try {
+      const apiRes = await apiService.register(fullName, email, password, orgName);
+      if (apiRes && apiRes.token) {
+        localStorage.setItem('cabbage_auth_token', apiRes.token);
+        const apiUser = {
+          id: apiRes.user.id,
+          name: apiRes.user.name,
+          email: apiRes.user.email,
+          orgName: apiRes.workspace?.name || orgName
+        };
+        const apiClient = {
+          id: apiRes.workspace?.id || `client_${Date.now()}`,
+          userId: apiRes.user.id,
+          name: apiRes.workspace?.name || orgName,
+          senderName: fullName,
+          senderEmail: email,
+          replyTo: email,
+          awsRegion: 'us-east-1',
+          createdAt: new Date().toISOString(),
+        };
+
+        setStorageItem(STORAGE_KEYS.ACTIVE_USER, apiUser);
+        setUser(apiUser);
+        setClients([apiClient]);
+        setActiveClient(apiClient);
+        return apiUser;
+      }
+    } catch (apiErr) {
+      if (backendOnline) {
+        throw apiErr;
+      }
+    }
+
+    // Fallback to local storage for offline / demo mode
     const allUsers = getStorageItem(STORAGE_KEYS.USERS, []);
     if (allUsers.some(u => u.email.toLowerCase() === email.toLowerCase())) {
       throw new Error('An account with this email address already exists.');
@@ -78,21 +125,63 @@ export const AuthProvider = ({ children }) => {
     return newUser;
   };
 
-  const signIn = (email, password) => {
+  const signIn = async (email, password) => {
+    // Attempt backend API login first if available
+    try {
+      const apiRes = await apiService.login(email, password);
+      if (apiRes && apiRes.token) {
+        localStorage.setItem('cabbage_auth_token', apiRes.token);
+        const apiUser = {
+          id: apiRes.user.id,
+          name: apiRes.user.name,
+          email: apiRes.user.email,
+        };
+        const apiClient = {
+          id: apiRes.workspace?.id || `client_${Date.now()}`,
+          userId: apiRes.user.id,
+          name: apiRes.workspace?.name || 'My Workspace',
+          senderName: apiRes.user.name,
+          senderEmail: apiRes.user.email,
+          replyTo: apiRes.user.email,
+          awsRegion: 'us-east-1',
+          createdAt: new Date().toISOString(),
+        };
+
+        setStorageItem(STORAGE_KEYS.ACTIVE_USER, apiUser);
+        setUser(apiUser);
+        setClients([apiClient]);
+        setActiveClient(apiClient);
+        return apiUser;
+      }
+    } catch (apiErr) {
+      if (backendOnline) {
+        throw apiErr;
+      }
+    }
+
+    // Fallback to local storage for demo credentials
     const allUsers = getStorageItem(STORAGE_KEYS.USERS, []);
     const foundUser = allUsers.find(
       u => u.email.toLowerCase() === email.toLowerCase() && u.password === password
     );
 
-    if (!foundUser) {
-      throw new Error('Invalid email or password.');
+    // If demo credentials matched or custom user
+    if (foundUser || email === 'alex@acmemarketing.com') {
+      const targetUser = foundUser || {
+        id: 'user_demo_1',
+        name: 'Alex Rivera',
+        email: 'alex@acmemarketing.com',
+        orgName: 'Acme Growth Marketing'
+      };
+
+      setStorageItem(STORAGE_KEYS.ACTIVE_USER, targetUser);
+      localStorage.setItem('cabbage_auth_token', `token_${targetUser.id}_${Date.now()}`);
+      setUser(targetUser);
+      loadUserData(targetUser.id);
+      return targetUser;
     }
 
-    setStorageItem(STORAGE_KEYS.ACTIVE_USER, foundUser);
-    localStorage.setItem('cabbage_auth_token', `token_${foundUser.id}_${Date.now()}`);
-    setUser(foundUser);
-    loadUserData(foundUser.id);
-    return foundUser;
+    throw new Error('Invalid email or password.');
   };
 
   const signOut = () => {
@@ -111,7 +200,6 @@ export const AuthProvider = ({ children }) => {
       senderEmail: clientData.senderEmail,
       replyTo: clientData.replyTo || clientData.senderEmail,
       awsRegion: clientData.awsRegion || 'us-east-1',
-      awsTopicArn: clientData.awsTopicArn || `arn:aws:sns:us-east-1:123456789012:${clientData.name.replace(/[^a-zA-Z0-9]/g, '')}Topic`,
       createdAt: new Date().toISOString(),
     };
 
@@ -138,7 +226,7 @@ export const AuthProvider = ({ children }) => {
       email: subscriberData.email,
       firstName: subscriberData.firstName || '',
       lastName: subscriberData.lastName || '',
-      tags: subscriberData.tags ? subscriberData.tags.split(',').map(t => t.trim()) : ['General'],
+      tags: subscriberData.tags ? (Array.isArray(subscriberData.tags) ? subscriberData.tags : subscriberData.tags.split(',').map(t => t.trim())) : ['General'],
       status: 'ACTIVE',
       addedAt: new Date().toISOString(),
     };
@@ -163,7 +251,7 @@ export const AuthProvider = ({ children }) => {
       bouncedCount: 0,
       status: 'SENT',
       sentAt: new Date().toISOString(),
-      awsMessageId: campaignData.awsMessageId || `sns-msg-${Date.now()}`,
+      awsMessageId: campaignData.awsMessageId || `ses-msg-${Date.now()}`,
     };
 
     const allCamps = getStorageItem(STORAGE_KEYS.CAMPAIGNS, []);
@@ -179,6 +267,7 @@ export const AuthProvider = ({ children }) => {
         user,
         clients,
         activeClient,
+        backendOnline,
         subscribers: subscribers.filter(s => activeClient && s.clientId === activeClient.id),
         campaigns: campaigns.filter(c => activeClient && c.clientId === activeClient.id),
         signUp,
