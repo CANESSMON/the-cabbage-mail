@@ -208,14 +208,28 @@ export default function DomainVerificationWidget({ domain = 'yourcompany.com' })
                   </Badge>
                 </td>
                 <td className="px-4 py-3 text-right">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => handleCopy(dnsData.verificationTxt.value, 'txt')}
-                    className="h-7 w-7 p-0 hover:bg-slate-100 text-slate-700"
-                  >
-                    {copiedKey === 'txt' ? <Check className="w-3.5 h-3.5 text-slate-950" /> : <Copy className="w-3.5 h-3.5 text-slate-500" />}
-                  </Button>
+                  <div className="flex justify-end space-x-1">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      title="Copy Host Name"
+                      onClick={() => handleCopy(dnsData.verificationTxt.name, 'txt_name')}
+                      className="h-7 px-2 hover:bg-slate-100 text-slate-700 text-[10px]"
+                    >
+                      {copiedKey === 'txt_name' ? <Check className="w-3 h-3 text-slate-950 mr-1" /> : <Copy className="w-3 h-3 text-slate-500 mr-1" />}
+                      Host
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      title="Copy Value"
+                      onClick={() => handleCopy(dnsData.verificationTxt.value, 'txt_val')}
+                      className="h-7 px-2 hover:bg-slate-100 text-slate-700 text-[10px]"
+                    >
+                      {copiedKey === 'txt_val' ? <Check className="w-3 h-3 text-slate-950 mr-1" /> : <Copy className="w-3 h-3 text-slate-500 mr-1" />}
+                      Value
+                    </Button>
+                  </div>
                 </td>
               </tr>
 
@@ -231,14 +245,28 @@ export default function DomainVerificationWidget({ domain = 'yourcompany.com' })
                     </Badge>
                   </td>
                   <td className="px-4 py-3 text-right">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => handleCopy(dkim.value, `dkim_${idx}`)}
-                      className="h-7 w-7 p-0 hover:bg-slate-100 text-slate-700"
-                    >
-                      {copiedKey === `dkim_${idx}` ? <Check className="w-3.5 h-3.5 text-slate-950" /> : <Copy className="w-3.5 h-3.5 text-slate-500" />}
-                    </Button>
+                    <div className="flex justify-end space-x-1">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        title="Copy Host Name"
+                        onClick={() => handleCopy(dkim.name, `dkim_${idx}_name`)}
+                        className="h-7 px-2 hover:bg-slate-100 text-slate-700 text-[10px]"
+                      >
+                        {copiedKey === `dkim_${idx}_name` ? <Check className="w-3 h-3 text-slate-950 mr-1" /> : <Copy className="w-3 h-3 text-slate-500 mr-1" />}
+                        Host
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        title="Copy Value"
+                        onClick={() => handleCopy(dkim.value, `dkim_${idx}_val`)}
+                        className="h-7 px-2 hover:bg-slate-100 text-slate-700 text-[10px]"
+                      >
+                        {copiedKey === `dkim_${idx}_val` ? <Check className="w-3 h-3 text-slate-950 mr-1" /> : <Copy className="w-3 h-3 text-slate-500 mr-1" />}
+                        Value
+                      </Button>
+                    </div>
                   </td>
                 </tr>
               ))}
@@ -254,14 +282,28 @@ export default function DomainVerificationWidget({ domain = 'yourcompany.com' })
                   </Badge>
                 </td>
                 <td className="px-4 py-3 text-right">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => handleCopy(dnsData.spfRecord.value, 'spf')}
-                    className="h-7 w-7 p-0 hover:bg-slate-100 text-slate-700"
-                  >
-                    {copiedKey === 'spf' ? <Check className="w-3.5 h-3.5 text-slate-950" /> : <Copy className="w-3.5 h-3.5 text-slate-500" />}
-                  </Button>
+                  <div className="flex justify-end space-x-1">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      title="Copy Host Name"
+                      onClick={() => handleCopy(dnsData.spfRecord.name, 'spf_name')}
+                      className="h-7 px-2 hover:bg-slate-100 text-slate-700 text-[10px]"
+                    >
+                      {copiedKey === 'spf_name' ? <Check className="w-3 h-3 text-slate-950 mr-1" /> : <Copy className="w-3 h-3 text-slate-500 mr-1" />}
+                      Host
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      title="Copy Value"
+                      onClick={() => handleCopy(dnsData.spfRecord.value, 'spf_val')}
+                      className="h-7 px-2 hover:bg-slate-100 text-slate-700 text-[10px]"
+                    >
+                      {copiedKey === 'spf_val' ? <Check className="w-3 h-3 text-slate-950 mr-1" /> : <Copy className="w-3 h-3 text-slate-500 mr-1" />}
+                      Value
+                    </Button>
+                  </div>
                 </td>
               </tr>
 
@@ -276,14 +318,28 @@ export default function DomainVerificationWidget({ domain = 'yourcompany.com' })
                   </Badge>
                 </td>
                 <td className="px-4 py-3 text-right">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => handleCopy(dnsData.dmarcRecord.value, 'dmarc')}
-                    className="h-7 w-7 p-0 hover:bg-slate-100 text-slate-700"
-                  >
-                    {copiedKey === 'dmarc' ? <Check className="w-3.5 h-3.5 text-slate-950" /> : <Copy className="w-3.5 h-3.5 text-slate-500" />}
-                  </Button>
+                  <div className="flex justify-end space-x-1">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      title="Copy Host Name"
+                      onClick={() => handleCopy(dnsData.dmarcRecord.name, 'dmarc_name')}
+                      className="h-7 px-2 hover:bg-slate-100 text-slate-700 text-[10px]"
+                    >
+                      {copiedKey === 'dmarc_name' ? <Check className="w-3 h-3 text-slate-950 mr-1" /> : <Copy className="w-3 h-3 text-slate-500 mr-1" />}
+                      Host
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      title="Copy Value"
+                      onClick={() => handleCopy(dnsData.dmarcRecord.value, 'dmarc_val')}
+                      className="h-7 px-2 hover:bg-slate-100 text-slate-700 text-[10px]"
+                    >
+                      {copiedKey === 'dmarc_val' ? <Check className="w-3 h-3 text-slate-950 mr-1" /> : <Copy className="w-3 h-3 text-slate-500 mr-1" />}
+                      Value
+                    </Button>
+                  </div>
                 </td>
               </tr>
             </tbody>
