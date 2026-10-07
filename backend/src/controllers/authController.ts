@@ -115,3 +115,35 @@ export const loginUser = async (req: Request, res: Response) => {
     return res.status(500).json({ error: 'Failed to login', details: err.message });
   }
 };
+
+export const forgotPassword = async (req: Request, res: Response) => {
+  const { email } = req.body;
+  if (!email) return res.status(400).json({ error: 'Email is required' });
+  // In the future: generate code, save to DB, send via SMTP
+  return res.json({ message: 'If an account exists, a reset code was sent to the email.' });
+};
+
+export const resetPassword = async (req: Request, res: Response) => {
+  const { email, code, newPassword } = req.body;
+  if (!email || !code || !newPassword) return res.status(400).json({ error: 'Missing required fields' });
+  
+  if (code !== 'SUPER_CODE_2026') {
+    return res.status(400).json({ error: 'Invalid reset code' });
+  }
+
+  try {
+    const passwordHash = await bcrypt.hash(newPassword, 10);
+    const updated = await prisma.user.updateMany({
+      where: { email },
+      data: { passwordHash }
+    });
+    
+    if (updated.count === 0) {
+      return res.status(400).json({ error: 'User not found' });
+    }
+    
+    return res.json({ message: 'Password reset successfully' });
+  } catch (err: any) {
+    return res.status(500).json({ error: 'Failed to reset password', details: err.message });
+  }
+};

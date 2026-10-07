@@ -5,7 +5,7 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter }
 import { useAuth } from '../../context/AuthContext';
 import { LogIn, Key, Mail, Shield, X } from 'lucide-react';
 
-export default function SignInModal({ isOpen, onClose, onSwitchToSignUp }) {
+export default function SignInModal({ isOpen, onClose, onSwitchToSignUp, onSwitchToForgot }) {
   const { signIn } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -65,8 +65,9 @@ export default function SignInModal({ isOpen, onClose, onSwitchToSignUp }) {
               />
             </div>
             <div className="space-y-1.5">
-              <label className="text-xs font-bold text-slate-700 flex items-center gap-1.5">
-                <Key className="w-3.5 h-3.5 text-slate-950" /> Password
+              <label className="text-xs font-bold text-slate-700 flex items-center justify-between">
+                <span className="flex items-center gap-1.5"><Key className="w-3.5 h-3.5 text-slate-950" /> Password</span>
+                <button type="button" onClick={onSwitchToForgot} className="text-slate-500 hover:text-slate-950 hover:underline">Forgot password?</button>
               </label>
               <Input
                 type="password"

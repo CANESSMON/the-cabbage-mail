@@ -1,7 +1,7 @@
 import express, { Request, Response } from 'express';
 import cors from 'cors';
 import { env } from './config/env.js';
-import { registerUser, loginUser } from './controllers/authController.js';
+import { registerUser, loginUser, forgotPassword, resetPassword } from './controllers/authController.js';
 import { getDomains, verifyDomain, autoProvisionDns } from './controllers/domainController.js';
 import { getSubscribers, createSubscriber, deleteSubscriber } from './controllers/subscriberController.js';
 import { getCampaigns, createCampaign, sendCampaign } from './controllers/campaignController.js';
@@ -27,6 +27,8 @@ app.get('/api/v1/health', (req: Request, res: Response) => {
 // Authentication Routes
 app.post('/api/v1/auth/register', registerUser);
 app.post('/api/v1/auth/login', loginUser);
+app.post('/api/v1/auth/forgot-password', forgotPassword);
+app.post('/api/v1/auth/reset-password', resetPassword);
 
 // Protected Domain Verification Routes
 app.get('/api/v1/domains', authenticateJwt as any, getDomains as any);

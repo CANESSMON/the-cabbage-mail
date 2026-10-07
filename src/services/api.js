@@ -57,6 +57,36 @@ export const apiService = {
     }
   },
 
+  forgotPassword: async (email) => {
+    try {
+      const res = await fetch(`${API_BASE_URL}/auth/forgot-password`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Failed to request reset');
+      return data;
+    } catch (err) {
+      throw err;
+    }
+  },
+
+  resetPassword: async (email, code, newPassword) => {
+    try {
+      const res = await fetch(`${API_BASE_URL}/auth/reset-password`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, code, newPassword })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Failed to reset password');
+      return data;
+    } catch (err) {
+      throw err;
+    }
+  },
+
   // Campaigns: Get list
   getCampaigns: async () => {
     try {

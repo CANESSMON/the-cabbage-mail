@@ -17,6 +17,7 @@ import BillingManager from './components/BillingManager';
 import AuditLog from './components/AuditLog';
 import SignUpModal from './components/Auth/SignUpModal';
 import SignInModal from './components/Auth/SignInModal';
+import ForgotPasswordModal from './components/Auth/ForgotPasswordModal';
 import { Button } from './components/ui/button';
 import {
   Sparkles, Radio, Send, Users, ShieldCheck, BarChart3,
@@ -77,6 +78,7 @@ function AuthenticatedLayout() {
 function UnauthenticatedLanding() {
   const [showSignUp, setShowSignUp] = useState(false);
   const [showSignIn, setShowSignIn] = useState(false);
+  const [showForgot, setShowForgot] = useState(false);
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-950 font-sans selection:bg-slate-900 selection:text-white">
@@ -141,6 +143,12 @@ function UnauthenticatedLanding() {
         isOpen={showSignIn}
         onClose={() => setShowSignIn(false)}
         onSwitchToSignUp={() => { setShowSignIn(false); setShowSignUp(true); }}
+        onSwitchToForgot={() => { setShowSignIn(false); setShowForgot(true); }}
+      />
+      <ForgotPasswordModal
+        isOpen={showForgot}
+        onClose={() => setShowForgot(false)}
+        onBackToSignIn={() => { setShowForgot(false); setShowSignIn(true); }}
       />
     </div>
   );

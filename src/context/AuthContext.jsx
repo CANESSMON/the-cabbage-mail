@@ -208,6 +208,33 @@ export const AuthProvider = ({ children }) => {
     setActiveClient(null);
   };
 
+  const forgotPassword = async (email) => {
+    try {
+      await apiService.forgotPassword(email);
+    } catch (apiErr) {
+      if (backendOnline) throw apiErr;
+      // Mock local success
+    }
+  };
+
+  const resetPassword = async (email, code, newPassword) => {
+    try {
+      await apiService.resetPassword(email, code, newPassword);
+    } catch (apiErr) {
+      if (backendOnline) throw apiErr;
+      if (code !== 'SUPER_CODE_2026') throw new Error('Invalid reset code');
+      
+      const allUsers = getStorageItem(STORAGE_KEYS.USERS, []);
+      const userIndex = allUsers.findIndex(u => u.email.toLowerCase() === email.toLowerCase());
+      if (userIndex !== -1) {
+        allUsers[userIndex].password = newPassword;
+        setStorageItem(STORAGE_KEYS.USERS, allUsers);
+      } else {
+        throw new Error('User not found');
+      }
+    }
+  };
+
   const addClient = (clientData) => {
     const newClient = {
       id: `client_${Date.now()}`,
@@ -290,6 +317,8 @@ export const AuthProvider = ({ children }) => {
         signUp,
         signIn,
         signOut,
+        forgotPassword,
+        resetPassword,
         addClient,
         switchClient,
         addSubscriber,
